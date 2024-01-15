@@ -1,78 +1,26 @@
 {
   "nodes": {
-    "flake-utils": {
-      "inputs": {
-        "systems": "systems"
-      },
-      "locked": {
-        "lastModified": 1694529238,
-        "narHash": "sha256-zsNZZGTGnMOf9YpHKJqMSsa0dXbfmxeoJ7xHlrt+xmY=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "ff7b65b44d01cf9ba6a71320833626af21126384",
-        "type": "github"
-      },
-      "original": {
-        "id": "flake-utils",
-        "type": "indirect"
-      }
-    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1701020769,
-        "narHash": "sha256-4YzCo7xMzkG/t/VlTHqOg9hvXCvqdWYDX/jpF0h+Wr8=",
+        "lastModified": 1704161960,
+        "narHash": "sha256-QGua89Pmq+FBAro8NriTuoO/wNaUtugt29/qqA8zeeM=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "b608fc233c0592210250974d1bb3c11dfaf95e58",
+        "rev": "63143ac2c9186be6d9da6035fa22620018c85932",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
+        "ref": "nixpkgs-unstable",
         "repo": "nixpkgs",
         "type": "github"
-      }
-    },
-    "nur": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1700580516,
-        "narHash": "sha256-h72i6afGKreU+DjpZ6+qersarYYp4YjX+DBQ+MQkOG4=",
-        "ref": "refs/heads/main",
-        "rev": "a68a81cbc743e84aaee331ae7e58699398dd732d",
-        "revCount": 167,
-        "type": "git",
-        "url": "https://git.jojodev.com/jolheiser/nur"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.jojodev.com/jolheiser/nur"
       }
     },
     "root": {
       "inputs": {
-        "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
-        "nur": "nur",
-        "tailwind-ctp": "tailwind-ctp"
-      }
-    },
-    "systems": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
+        "tailwind-ctp": "tailwind-ctp",
+        "tailwind-ctp-lsp": "tailwind-ctp-lsp"
       }
     },
     "tailwind-ctp": {
@@ -93,6 +41,26 @@
       "original": {
         "type": "git",
         "url": "https://git.jojodev.com/jolheiser/tailwind-ctp"
+      }
+    },
+    "tailwind-ctp-lsp": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1699401590,
+        "narHash": "sha256-nx8ExuBRUux9eXSUgkWp1LJMvA3dmA76+2xggZjHTU0=",
+        "ref": "refs/heads/master",
+        "rev": "b321333ad08bf21db242f246b10ad4a50b8fc8a0",
+        "revCount": 848,
+        "type": "git",
+        "url": "https://git.jojodev.com/jolheiser/tailwind-ctp-intellisense"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.jojodev.com/jolheiser/tailwind-ctp-intellisense"
       }
     }
   },

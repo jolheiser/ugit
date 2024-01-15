@@ -1,0 +1,44 @@
+.markdown * {
+  all: revert;
+  color: rgb(var(--ctp-text));
+}
+
+.markdown a {
+  color: rgb(var(--ctp-blue));
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+}
+
+.markdown a:hover {
+  text-decoration-style: solid;
+}
+
+.chroma {
+  font-size: small;
+}
+
+.chroma * {
+  background-color: rgb(var(--ctp-base)) !important;
+}
+
+.chroma table {
+  border-spacing: 5px 0 !important;
+}
+
+.chroma .lnt {
+  color: rgb(var(--ctp-subtext1)) !important;
+}
+
+.chroma .lnt:target,
+.chroma .lnt:focus {
+  color: rgb(var(--ctp-subtext0)) !important;
+}
+
+.chroma .line {
+  white-space: break-spaces;
+}
+
+.chroma .line.active,
+.chroma .line.active * {
+  background: rgb(var(--ctp-surface0)) !important;
+}

@@ -1,0 +1,68 @@
+package html
+
+type RepoFileContext struct {
+  BaseContext
+	RepoHeaderComponentContext
+  Code string
+	Path string
+}
+
+templ RepoFile(rfc RepoFileContext) {
+	@base(rfc.BaseContext) {
+		@repoHeaderComponent(rfc.RepoHeaderComponentContext)
+		<div class="mt-2 text-text"><a class="text-text underline decoration-text/50 decoration-dashed hover:decoration-solid" href="?raw">Raw</a><span>{ " - " }{ rfc.Path }</span>@templ.Raw(rfc.Code)</div>
+	}
+	<script>
+		const lineRe = /#L(\d+)(?:-L(\d+))?/g
+		const $lineLines = document.querySelectorAll(".chroma .lntable .lnt");
+		const $codeLines = document.querySelectorAll(".chroma .lntable .line");
+		let start = 0;
+		let end = 0;
+
+		const results = [...location.hash.matchAll(lineRe)];		
+		if (0 in results) {
+			start = results[0][1] !== undefined ? parseInt(results[0][1]) : 0;
+			end = results[0][2] !== undefined ? parseInt(results[0][2]) : 0;
+		}
+		if (start != 0) {
+			deactivateLines();
+			activateLines(start, end);
+		}
+
+		for (let line of $lineLines) {
+			line.addEventListener("click", (event) => {
+				event.preventDefault();
+				deactivateLines();
+				const n = parseInt(line.id.substring(1));
+				let anchor = "";
+				if (event.shiftKey) {
+					end = n;
+					anchor = `#L${start}-L${end}`;
+				} else {
+					start = n;
+					end = 0;
+					anchor = `#L${start}`;
+				}
+				history.pushState(null, null, anchor);
+				activateLines(start, end);
+			});
+		}
+
+		function activateLines(start, end) {
+			if (end < start) end = start;
+			for (let idx = start - 1; idx < end; idx++) {
+				$codeLines[idx].classList.add("active");
+			}
+		}
+
+		function deactivateLines() {
+			for (let code of $codeLines) {
+				code.classList.remove("active");
+			}
+		}
+
+		
+		
+	</script>
+}
+

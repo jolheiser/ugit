@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 24 24" stroke="#de4c36" fill="#de4c36" stroke-width="1" xmlns="http://www.w3.org/2000/svg">
+  <title>ugit icon</title>
+  <rect fill="none" x="1" y="1" rx="1" ry="1" width="22" height="22"></rect>
+  <ellipse cx="6" cy="6" rx="2" ry="2"></ellipse>
+  <ellipse cx="18" cy="6" rx="2" ry="2"></ellipse>
+  <ellipse cx="18" cy="18" rx="2" ry="2"></ellipse>
+  <line stroke-width="1.5" x1="18" y1="5" x2="18" y2="18"></line>
+  <path stroke-width="1.5" d="M6 6 q 0 12 12 12" fill="none" />
+</svg>

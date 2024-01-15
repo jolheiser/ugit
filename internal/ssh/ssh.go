@@ -3,20 +3,30 @@ package ssh
 import (
 	"fmt"
 
+	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
-	"github.com/charmbracelet/wish/git"
 	"github.com/charmbracelet/wish/logging"
 )
 
-func New() (*ssh.Server, error) {
+// Settings holds the configuration for the SSH server
+type Settings struct {
+	AuthorizedKeys string
+	CloneURL       string
+	Port           int
+	HostKey        string
+	RepoDir        string
+}
+
+// New creates a new SSH server.
+func New(settings Settings) (*ssh.Server, error) {
 	s, err := wish.NewServer(
-		wish.WithAuthorizedKeys(".ssh/authorized_keys"),
-		wish.WithAddress("localhost:8448"),
-		wish.WithHostKeyPath(".ssh/ugit_ed25519"),
+		wish.WithAuthorizedKeys(settings.AuthorizedKeys),
+		wish.WithAddress(fmt.Sprintf(":%d", settings.Port)),
+		wish.WithHostKeyPath(settings.HostKey),
 		wish.WithMiddleware(
-			git.Middleware(".ugit", app{}),
-			logging.Middleware(),
+			Middleware(settings.RepoDir, settings.CloneURL, settings.Port, hooks{}),
+			logging.MiddlewareWithLogger(DefaultLogger),
 		),
 	)
 	if err != nil {
@@ -26,10 +36,16 @@ func New() (*ssh.Server, error) {
 	return s, nil
 }
 
-type app struct{}
+type hooks struct{}
 
-func (a app) AuthRepo(repo string, pk ssh.PublicKey) git.AccessLevel {
-	return git.ReadWriteAccess
-}
-func (a app) Push(_ string, _ ssh.PublicKey)  {}
-func (a app) Fetch(_ string, _ ssh.PublicKey) {}
+func (a hooks) Push(_ string, _ ssh.PublicKey)  {}
+func (a hooks) Fetch(_ string, _ ssh.PublicKey) {}
+
+var (
+	DefaultLogger logging.Logger = log.StandardLog()
+	NoopLogger    logging.Logger = noopLogger{}
+)
+
+type noopLogger struct{}
+
+func (n noopLogger) Printf(format string, v ...interface{}) {}

@@ -1,0 +1,5 @@
+[[language]]
+name = "templ"
+language-id = "html"
+language-servers = ["templ", "vscode-html-language-server", "tailwindcss-ls"]
+
