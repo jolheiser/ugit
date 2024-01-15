@@ -47,7 +47,7 @@ templ Index(ic IndexContext) {
 				if ic.Profile.Email != "" {
 					<div class="text-mauve col-span-2">
 						<div class="w-5 h-5 stroke-mauve inline-block mr-1 align-middle">@templ.Raw(string(assets.EmailIcon))</div>
-						<a class="underline decoration-mauve/50 decoration-dashed hover:decoration-solid" href="mailto:john.olheiser@gmail.com">john.olheiser@gmail.com</a>
+						<a class="underline decoration-mauve/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL("mailto:" + ic.Profile.Email) }>{ ic.Profile.Email }</a>
 					</div>
 				}
 			</div>
