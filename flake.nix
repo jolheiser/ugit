@@ -58,7 +58,8 @@
       ...
     }: let
       cfg = config.services.ugit;
-      configFile = pkgs.writeText "ugit.yaml" cfg.configFile;
+      yamlFormat = pkgs.formats.yaml {};
+      configFile = pkgs.writeText "ugit.yaml" (builtins.readFile (yamlFormat.generate "ugit-yaml" cfg.config));
       authorizedKeysFile = pkgs.writeText "ugit_keys" (builtins.concatStringsSep "\n" cfg.authorizedKeys);
     in {
       options = with lib; {
@@ -95,9 +96,9 @@
             default = "/var/lib/ugit/ugit_ed25519";
           };
 
-          configFile = mkOption {
-            type = types.str;
-            default = "";
+          config = mkOption {
+            type = types.attrs;
+            default = {};
             description = "config.yaml contents";
           };
 
