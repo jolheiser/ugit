@@ -81,6 +81,7 @@ func New(settings Settings) Server {
 				rh.repoTree(chi.URLParam(r, "ref"), chi.URLParam(r, "*")).ServeHTTP(w, r)
 			})
 			r.Get("/refs", httperr.Handler(rh.repoRefs))
+			r.Get("/log/{ref}", httperr.Handler(rh.repoLog))
 		})
 	})
 

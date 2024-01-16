@@ -28,9 +28,9 @@ func lastCommit(repo *git.Repo, human bool) string {
 		return ""
 	}
 	if human {
-		return humanize.Time(c.Author.When)
+		return humanize.Time(c.When)
 	}
-	return c.Author.When.Format("01/02/2006 03:04:05 PM")
+	return c.When.Format("01/02/2006 03:04:05 PM")
 }
 
 templ Index(ic IndexContext) {

@@ -110,7 +110,7 @@ func RepoRefs(rrc RepoRefsContext) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var8 templ.SafeURL = templ.SafeURL(fmt.Sprintf("/%s/log/%s/", rrc.RepoHeaderComponentContext.Name, branch))
+					var templ_7745c5c3_Var8 templ.SafeURL = templ.SafeURL(fmt.Sprintf("/%s/log/%s", rrc.RepoHeaderComponentContext.Name, branch))
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var8)))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -201,7 +201,7 @@ func RepoRefs(rrc RepoRefsContext) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var15 templ.SafeURL = templ.SafeURL(fmt.Sprintf("/%s/log/%s/", rrc.RepoHeaderComponentContext.Name, tag.Name))
+					var templ_7745c5c3_Var15 templ.SafeURL = templ.SafeURL(fmt.Sprintf("/%s/log/%s", rrc.RepoHeaderComponentContext.Name, tag.Name))
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var15)))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -252,14 +252,14 @@ func RepoRefs(rrc RepoRefsContext) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					if tag.Annotation != "" {
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"col-span-8\">")
+						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"col-span-8 mb-3\">")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
 						var templ_7745c5c3_Var19 string
 						templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(tag.Annotation)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_refs.templ`, Line: 34, Col: 46}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_refs.templ`, Line: 34, Col: 51}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 						if templ_7745c5c3_Err != nil {

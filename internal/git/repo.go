@@ -89,19 +89,67 @@ func (r Repo) Git() (*git.Repository, error) {
 	return git.PlainOpen(r.path)
 }
 
-// LastCommit returns the last commit of the repo
-func (r Repo) LastCommit() (*object.Commit, error) {
+// Commit is a git commit
+type Commit struct {
+	SHA       string
+	Message   string
+	Signature string
+	Author    string
+	Email     string
+	When      time.Time
+}
+
+func (c Commit) Short() string {
+	return c.SHA[:8]
+}
+
+func (c Commit) Summary() string {
+	return strings.Split(c.Message, "\n")[0]
+}
+
+func (c Commit) Details() string {
+	return strings.Join(strings.Split(c.Message, "\n")[1:], "\n")
+}
+
+// Commit gets a specific commit by SHA
+func (r Repo) Commit(sha string) (Commit, error) {
 	repo, err := r.Git()
 	if err != nil {
-		return nil, err
+		return Commit{}, err
+	}
+
+	return commit(repo, sha)
+}
+
+// LastCommit returns the last commit of the repo
+func (r Repo) LastCommit() (Commit, error) {
+	repo, err := r.Git()
+	if err != nil {
+		return Commit{}, err
 	}
 
 	head, err := repo.Head()
 	if err != nil {
-		return nil, err
+		return Commit{}, err
 	}
 
-	return repo.CommitObject(head.Hash())
+	return commit(repo, head.Hash().String())
+}
+
+func commit(repo *git.Repository, sha string) (Commit, error) {
+	obj, err := repo.CommitObject(plumbing.NewHash(sha))
+	if err != nil {
+		return Commit{}, err
+	}
+
+	return Commit{
+		SHA:       obj.Hash.String(),
+		Message:   obj.Message,
+		Signature: obj.PGPSignature,
+		Author:    obj.Author.Name,
+		Email:     obj.Author.Email,
+		When:      obj.Author.When,
+	}, nil
 }
 
 // Branches is all repo branches, default first and sorted alphabetically after that
@@ -191,4 +239,41 @@ func (r Repo) Tags() ([]Tag, error) {
 	})
 
 	return tags, nil
+}
+
+// Commits returns commits from a specific hash in descending order
+func (r Repo) Commits(ref string) ([]Commit, error) {
+	repo, err := r.Git()
+	if err != nil {
+		return nil, err
+	}
+
+	hash, err := repo.ResolveRevision(plumbing.Revision(ref))
+	if err != nil {
+		return nil, err
+	}
+
+	cmts, err := repo.Log(&git.LogOptions{
+		From: *hash,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var commits []Commit
+	if err := cmts.ForEach(func(commit *object.Commit) error {
+		commits = append(commits, Commit{
+			SHA:       commit.Hash.String(),
+			Message:   commit.Message,
+			Signature: commit.PGPSignature,
+			Author:    commit.Author.Name,
+			Email:     commit.Author.Email,
+			When:      commit.Author.When,
+		})
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return commits, nil
 }

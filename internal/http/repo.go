@@ -143,3 +143,33 @@ func (rh repoHandler) repoRefs(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (rh repoHandler) repoLog(w http.ResponseWriter, r *http.Request) error {
+	repoName := chi.URLParam(r, "repo")
+	repo, err := git.NewRepo(rh.s.RepoDir, repoName)
+	if err != nil {
+		httpErr := http.StatusInternalServerError
+		if errors.Is(err, fs.ErrNotExist) {
+			httpErr = http.StatusNotFound
+		}
+		return httperr.Status(err, httpErr)
+	}
+	if repo.Meta.Private {
+		return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
+	}
+
+	commits, err := repo.Commits(chi.URLParam(r, "ref"))
+	if err != nil {
+		return httperr.Error(err)
+	}
+
+	if err := html.RepoLog(html.RepoLogContext{
+		BaseContext:                rh.baseContext(),
+		RepoHeaderComponentContext: rh.repoHeaderContext(repo, r),
+		Commits:                    commits,
+	}).Render(r.Context(), w); err != nil {
+		return httperr.Error(err)
+	}
+
+	return nil
+}
