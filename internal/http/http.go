@@ -80,6 +80,7 @@ func New(settings Settings) Server {
 			r.Get("/tree/{ref}/*", func(w http.ResponseWriter, r *http.Request) {
 				rh.repoTree(chi.URLParam(r, "ref"), chi.URLParam(r, "*")).ServeHTTP(w, r)
 			})
+			r.Get("/refs", httperr.Handler(rh.repoRefs))
 		})
 	})
 
@@ -106,10 +107,14 @@ func (rh repoHandler) baseContext() html.BaseContext {
 }
 
 func (rh repoHandler) repoHeaderContext(repo *git.Repo, r *http.Request) html.RepoHeaderComponentContext {
+	ref := chi.URLParam(r, "ref")
+	if ref == "" {
+		ref, _ = repo.DefaultBranch()
+	}
 	return html.RepoHeaderComponentContext{
 		Description: repo.Meta.Description,
 		Name:        chi.URLParam(r, "repo"),
-		Ref:         chi.URLParam(r, "ref"),
+		Ref:         ref,
 	}
 }
 

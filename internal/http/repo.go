@@ -107,3 +107,39 @@ func (rh repoHandler) repoFile(w http.ResponseWriter, r *http.Request, repo *git
 
 	return nil
 }
+
+func (rh repoHandler) repoRefs(w http.ResponseWriter, r *http.Request) error {
+	repoName := chi.URLParam(r, "repo")
+	repo, err := git.NewRepo(rh.s.RepoDir, repoName)
+	if err != nil {
+		httpErr := http.StatusInternalServerError
+		if errors.Is(err, fs.ErrNotExist) {
+			httpErr = http.StatusNotFound
+		}
+		return httperr.Status(err, httpErr)
+	}
+	if repo.Meta.Private {
+		return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
+	}
+
+	branches, err := repo.Branches()
+	if err != nil {
+		return httperr.Error(err)
+	}
+
+	tags, err := repo.Tags()
+	if err != nil {
+		return httperr.Error(err)
+	}
+
+	if err := html.RepoRefs(html.RepoRefsContext{
+		BaseContext:                rh.baseContext(),
+		RepoHeaderComponentContext: rh.repoHeaderContext(repo, r),
+		Branches:                   branches,
+		Tags:                       tags,
+	}).Render(r.Context(), w); err != nil {
+		return httperr.Error(err)
+	}
+
+	return nil
+}

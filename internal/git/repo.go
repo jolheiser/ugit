@@ -5,7 +5,9 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
+	"time"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -100,4 +102,93 @@ func (r Repo) LastCommit() (*object.Commit, error) {
 	}
 
 	return repo.CommitObject(head.Hash())
+}
+
+// Branches is all repo branches, default first and sorted alphabetically after that
+func (r Repo) Branches() ([]string, error) {
+	repo, err := r.Git()
+	if err != nil {
+		return nil, err
+	}
+
+	def, err := r.DefaultBranch()
+	if err != nil {
+		return nil, err
+	}
+
+	brs, err := repo.Branches()
+	if err != nil {
+		return nil, err
+	}
+
+	var branches []string
+	if err := brs.ForEach(func(branch *plumbing.Reference) error {
+		branches = append(branches, branch.Name().Short())
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	sort.Slice(branches, func(i, j int) bool {
+		return branches[i] == def || branches[i] < branches[j]
+	})
+
+	return branches, nil
+}
+
+// Tag is a git tag, which may or may not have an annotation/signature
+type Tag struct {
+	Name       string
+	Annotation string
+	Signature  string
+	When       time.Time
+}
+
+// Tags is all repo tags, sorted by time descending
+func (r Repo) Tags() ([]Tag, error) {
+	repo, err := r.Git()
+	if err != nil {
+		return nil, err
+	}
+
+	tgs, err := repo.Tags()
+	if err != nil {
+		return nil, err
+	}
+
+	var tags []Tag
+	if err := tgs.ForEach(func(tag *plumbing.Reference) error {
+		obj, err := repo.TagObject(tag.Hash())
+		switch err {
+		case nil:
+			tags = append(tags, Tag{
+				Name:       obj.Name,
+				Annotation: obj.Message,
+				Signature:  obj.PGPSignature,
+				When:       obj.Tagger.When,
+			})
+		case plumbing.ErrObjectNotFound:
+			commit, err := repo.CommitObject(tag.Hash())
+			if err != nil {
+				return err
+			}
+			tags = append(tags, Tag{
+				Name:       tag.Name().Short(),
+				Annotation: commit.Message,
+				Signature:  commit.PGPSignature,
+				When:       commit.Author.When,
+			})
+		default:
+			return err
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	sort.Slice(tags, func(i, j int) bool {
+		return tags[i].When.After(tags[j].When)
+	})
+
+	return tags, nil
 }
