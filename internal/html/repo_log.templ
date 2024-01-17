@@ -16,7 +16,10 @@ templ RepoLog(rlc RepoLogContext) {
 		<div class="grid grid-cols-8 gap-5 text-text mt-5">
 			for _, commit := range rlc.Commits {
 				<div class="col-span-4">
-					<div>{ commit.Short() }</div>
+					<div><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/commit/%s", rlc.RepoHeaderComponentContext.Name, commit.SHA)) }>{ commit.Short() }</a></div>
+					if commit.Signature != "" {
+						<details class="col-span-8 whitespace-pre"><summary class="cursor-pointer">Signature</summary><code>{ commit.Signature }</code></details>
+					}
 					<div class="whitespace-pre">
 						if commit.Details() != "" {
 							<details><summary class="cursor-pointer">{ commit.Summary() }</summary>{ commit.Details() }</details>

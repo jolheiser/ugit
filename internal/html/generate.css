@@ -42,3 +42,8 @@
 .chroma .line.active * {
   background: rgb(var(--ctp-surface0)) !important;
 }
+
+.commit .chroma {
+  border-radius: .25rem;
+  padding: 1em;
+}

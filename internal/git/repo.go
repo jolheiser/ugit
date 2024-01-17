@@ -1,6 +1,7 @@
 package git
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"os"
@@ -97,6 +98,31 @@ type Commit struct {
 	Author    string
 	Email     string
 	When      time.Time
+	// Extra
+	Stats CommitStats
+	Patch string
+	Files []CommitFile
+}
+
+// CommitStats is the stats of a commit
+type CommitStats struct {
+	Changed   int
+	Additions int
+	Deletions int
+}
+
+// CommitFile is a file contained in a commit
+type CommitFile struct {
+	From   CommitFileEntry
+	To     CommitFileEntry
+	Action string
+	Patch  string
+}
+
+// CommitFileEntry is a from/to in a file commit
+type CommitFileEntry struct {
+	Path   string
+	Commit string
 }
 
 func (c Commit) Short() string {
@@ -118,7 +144,7 @@ func (r Repo) Commit(sha string) (Commit, error) {
 		return Commit{}, err
 	}
 
-	return commit(repo, sha)
+	return commit(repo, sha, true)
 }
 
 // LastCommit returns the last commit of the repo
@@ -133,13 +159,86 @@ func (r Repo) LastCommit() (Commit, error) {
 		return Commit{}, err
 	}
 
-	return commit(repo, head.Hash().String())
+	return commit(repo, head.Hash().String(), false)
 }
 
-func commit(repo *git.Repository, sha string) (Commit, error) {
+func commit(repo *git.Repository, sha string, extra bool) (Commit, error) {
 	obj, err := repo.CommitObject(plumbing.NewHash(sha))
 	if err != nil {
 		return Commit{}, err
+	}
+
+	var c, a, d int
+	var p string
+	var f []CommitFile
+	if extra {
+		stats, err := obj.Stats()
+		if err != nil {
+			return Commit{}, err
+		}
+
+		c = len(stats)
+		for _, stat := range stats {
+			a += stat.Addition
+			d += stat.Deletion
+		}
+
+		parent, err := obj.Parent(0)
+		if err != nil {
+			return Commit{}, err
+		}
+
+		patch, err := obj.Patch(parent)
+		if err != nil {
+			return Commit{}, err
+		}
+
+		var buf bytes.Buffer
+		if err := patch.Encode(&buf); err != nil {
+			return Commit{}, err
+		}
+		p = buf.String()
+
+		objTree, err := obj.Tree()
+		if err != nil {
+			return Commit{}, err
+		}
+		parentTree, err := parent.Tree()
+		if err != nil {
+			return Commit{}, err
+		}
+
+		changes, err := parentTree.Diff(objTree)
+		if err != nil {
+			return Commit{}, err
+		}
+
+		for _, change := range changes {
+			action, err := change.Action()
+			if err != nil {
+				return Commit{}, err
+			}
+			patch, err := change.Patch()
+			if err != nil {
+				return Commit{}, err
+			}
+			var buf bytes.Buffer
+			if err := patch.Encode(&buf); err != nil {
+				return Commit{}, err
+			}
+			f = append(f, CommitFile{
+				From: CommitFileEntry{
+					Path:   change.From.Name,
+					Commit: parent.Hash.String(),
+				},
+				To: CommitFileEntry{
+					Path:   change.To.Name,
+					Commit: obj.Hash.String(),
+				},
+				Action: action.String(),
+				Patch:  buf.String(),
+			})
+		}
 	}
 
 	return Commit{
@@ -149,6 +248,13 @@ func commit(repo *git.Repository, sha string) (Commit, error) {
 		Author:    obj.Author.Name,
 		Email:     obj.Author.Email,
 		When:      obj.Author.When,
+		Stats: CommitStats{
+			Changed:   c,
+			Additions: a,
+			Deletions: d,
+		},
+		Patch: p,
+		Files: f,
 	}, nil
 }
 

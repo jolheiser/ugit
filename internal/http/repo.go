@@ -173,3 +173,65 @@ func (rh repoHandler) repoLog(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func (rh repoHandler) repoCommit(w http.ResponseWriter, r *http.Request) error {
+	repoName := chi.URLParam(r, "repo")
+	repo, err := git.NewRepo(rh.s.RepoDir, repoName)
+	if err != nil {
+		httpErr := http.StatusInternalServerError
+		if errors.Is(err, fs.ErrNotExist) {
+			httpErr = http.StatusNotFound
+		}
+		return httperr.Status(err, httpErr)
+	}
+	if repo.Meta.Private {
+		return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
+	}
+
+	commit, err := repo.Commit(chi.URLParam(r, "commit"))
+	if err != nil {
+		return httperr.Error(err)
+	}
+
+	for idx, p := range commit.Files {
+		var patch bytes.Buffer
+		if err := html.Code.Basic([]byte(p.Patch), "commit.patch", &patch); err != nil {
+			return httperr.Error(err)
+		}
+		commit.Files[idx].Patch = patch.String()
+	}
+
+	if err := html.RepoCommit(html.RepoCommitContext{
+		BaseContext:                rh.baseContext(),
+		RepoHeaderComponentContext: rh.repoHeaderContext(repo, r),
+		Commit:                     commit,
+	}).Render(r.Context(), w); err != nil {
+		return httperr.Error(err)
+	}
+
+	return nil
+}
+
+func (rh repoHandler) repoPatch(w http.ResponseWriter, r *http.Request) error {
+	repoName := chi.URLParam(r, "repo")
+	repo, err := git.NewRepo(rh.s.RepoDir, repoName)
+	if err != nil {
+		httpErr := http.StatusInternalServerError
+		if errors.Is(err, fs.ErrNotExist) {
+			httpErr = http.StatusNotFound
+		}
+		return httperr.Status(err, httpErr)
+	}
+	if repo.Meta.Private {
+		return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
+	}
+
+	commit, err := repo.Commit(chi.URLParam(r, "commit"))
+	if err != nil {
+		return httperr.Error(err)
+	}
+
+	w.Write([]byte(commit.Patch))
+
+	return nil
+}

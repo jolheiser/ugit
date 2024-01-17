@@ -82,6 +82,8 @@ func New(settings Settings) Server {
 			})
 			r.Get("/refs", httperr.Handler(rh.repoRefs))
 			r.Get("/log/{ref}", httperr.Handler(rh.repoLog))
+			r.Get("/commit/{commit}", httperr.Handler(rh.repoCommit))
+			r.Get("/commit/{commit}.patch", httperr.Handler(rh.repoPatch))
 		})
 	})
 
