@@ -1,6 +1,6 @@
 # ugit
 
-<img style="width: 50px;" alt="ugit logo" src="/ugit/tree/main/assets/ugit.svg?raw&pretty"/>
+<img alt="ugit logo" style="width:50px;" src="./assets/ugit.svg" />
 
 Minimal git server
 
@@ -29,4 +29,4 @@ http get https://github.com/<username>.keys | save --force path/to/authorized_ke
 
 [MIT](LICENSE)
 
-Lots of inspiration and some starting code used from [wish](https://github.com/charmbracelet/wish) [(MIT)](https://github.com/charmbracelet/wish/blob/3e6f92a166118390484ce4a0904114b375b9e485/LICENSE) and [legit](https://github.com/icyphox/legit) [(MIT)](https://github.com/icyphox/legit/blob/bdfc973207a67a3b217c130520d53373d088763c/license).
+Lots of inspiration and some starting code used from [gitea](https://github.com/go-gitea/gitea) [(MIT)](https://github.com/go-gitea/gitea/blob/eba9c0ce48c7d43910eb77db74c6648157663ceb/LICENSE), [wish](https://github.com/charmbracelet/wish) [(MIT)](https://github.com/charmbracelet/wish/blob/3e6f92a166118390484ce4a0904114b375b9e485/LICENSE), and [legit](https://github.com/icyphox/legit) [(MIT)](https://github.com/icyphox/legit/blob/bdfc973207a67a3b217c130520d53373d088763c/license).

@@ -21,7 +21,19 @@ templ RepoCommit(rcc RepoCommitContext) {
 		</div>
 		<div class="text-text mt-5">{ fmt.Sprintf("%d changed files, %d additions(+), %d deletions(-)", rcc.Commit.Stats.Changed, rcc.Commit.Stats.Additions, rcc.Commit.Stats.Deletions) }</div>
 		for _, file := range rcc.Commit.Files {
-			<div class="text-text mt-5"><span class="text-text/80">{ string(file.Action[0]) }</span>{ " " }<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s", rcc.RepoHeaderComponentContext.Name, file.From.Commit, file.From.Path)) }>{ file.From.Path }</a>{ " -> " }<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s", rcc.RepoHeaderComponentContext.Name, file.To.Commit, file.To.Path)) }>{ file.To.Path }</a></div>
+			<div class="text-text mt-5">
+				<span class="text-text/80" title={ file.Action }>{ string(file.Action[0]) }</span>
+				{ " " }
+				if file.From.Path != "" {
+					<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s", rcc.RepoHeaderComponentContext.Name, file.From.Commit, file.From.Path)) }>{ file.From.Path }</a>
+				}
+				if file.From.Path != "" && file.To.Path != "" {
+					{ " -> " }
+				}
+				if file.To.Path != "" {
+					<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s", rcc.RepoHeaderComponentContext.Name, file.To.Commit, file.To.Path)) }>{ file.To.Path }</a>
+				}
+			</div>
 			<div class="whitespace-pre commit">@templ.Raw(file.Patch)</div>
 		}
 	}
