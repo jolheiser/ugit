@@ -62,6 +62,9 @@ func New(settings Settings) Server {
 
 	rh := repoHandler{s: settings}
 	mux.Route("/{repo}.git", func(r chi.Router) {
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "/"+chi.URLParam(r, "repo"), http.StatusFound)
+		})
 		r.Get("/info/refs", httperr.Handler(rh.infoRefs))
 		r.Post("/git-upload-pack", httperr.Handler(rh.uploadPack))
 	})
@@ -69,6 +72,7 @@ func New(settings Settings) Server {
 	mux.Route("/", func(r chi.Router) {
 		r.Get("/", httperr.Handler(rh.index))
 		r.Route("/{repo}", func(r chi.Router) {
+			r.Use(rh.repoMiddleware)
 			r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 				if r.URL.Query().Has("go-get") {
 					repo := chi.URLParam(r, "repo")

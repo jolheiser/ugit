@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"go.jolheiser.com/ugit/internal/html/markup"
-	"io/fs"
 	"mime"
 	"net/http"
 	"path/filepath"
@@ -19,19 +18,9 @@ import (
 
 func (rh repoHandler) repoTree(ref, path string) http.HandlerFunc {
 	return httperr.Handler(func(w http.ResponseWriter, r *http.Request) error {
-		repoName := chi.URLParam(r, "repo")
-		repo, err := git.NewRepo(rh.s.RepoDir, repoName)
-		if err != nil {
-			httpErr := http.StatusInternalServerError
-			if errors.Is(err, fs.ErrNotExist) {
-				httpErr = http.StatusNotFound
-			}
-			return httperr.Status(err, httpErr)
-		}
-		if repo.Meta.Private {
-			return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
-		}
+		repo := r.Context().Value(repoCtxKey).(*git.Repo)
 
+		var err error
 		if ref == "" {
 			ref, err = repo.DefaultBranch()
 			if err != nil {
@@ -61,7 +50,7 @@ func (rh repoHandler) repoTree(ref, path string) http.HandlerFunc {
 			BaseContext:                rh.baseContext(),
 			RepoHeaderComponentContext: rh.repoHeaderContext(repo, r),
 			RepoTreeComponentContext: html.RepoTreeComponentContext{
-				Repo: repoName,
+				Repo: repo.Name(),
 				Ref:  ref,
 				Tree: tree,
 				Back: back,
@@ -110,18 +99,7 @@ func (rh repoHandler) repoFile(w http.ResponseWriter, r *http.Request, repo *git
 }
 
 func (rh repoHandler) repoRefs(w http.ResponseWriter, r *http.Request) error {
-	repoName := chi.URLParam(r, "repo")
-	repo, err := git.NewRepo(rh.s.RepoDir, repoName)
-	if err != nil {
-		httpErr := http.StatusInternalServerError
-		if errors.Is(err, fs.ErrNotExist) {
-			httpErr = http.StatusNotFound
-		}
-		return httperr.Status(err, httpErr)
-	}
-	if repo.Meta.Private {
-		return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
-	}
+	repo := r.Context().Value(repoCtxKey).(*git.Repo)
 
 	branches, err := repo.Branches()
 	if err != nil {
@@ -146,18 +124,7 @@ func (rh repoHandler) repoRefs(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (rh repoHandler) repoLog(w http.ResponseWriter, r *http.Request) error {
-	repoName := chi.URLParam(r, "repo")
-	repo, err := git.NewRepo(rh.s.RepoDir, repoName)
-	if err != nil {
-		httpErr := http.StatusInternalServerError
-		if errors.Is(err, fs.ErrNotExist) {
-			httpErr = http.StatusNotFound
-		}
-		return httperr.Status(err, httpErr)
-	}
-	if repo.Meta.Private {
-		return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
-	}
+	repo := r.Context().Value(repoCtxKey).(*git.Repo)
 
 	commits, err := repo.Commits(chi.URLParam(r, "ref"))
 	if err != nil {
@@ -176,18 +143,7 @@ func (rh repoHandler) repoLog(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (rh repoHandler) repoCommit(w http.ResponseWriter, r *http.Request) error {
-	repoName := chi.URLParam(r, "repo")
-	repo, err := git.NewRepo(rh.s.RepoDir, repoName)
-	if err != nil {
-		httpErr := http.StatusInternalServerError
-		if errors.Is(err, fs.ErrNotExist) {
-			httpErr = http.StatusNotFound
-		}
-		return httperr.Status(err, httpErr)
-	}
-	if repo.Meta.Private {
-		return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
-	}
+	repo := r.Context().Value(repoCtxKey).(*git.Repo)
 
 	commit, err := repo.Commit(chi.URLParam(r, "commit"))
 	if err != nil {
@@ -214,18 +170,7 @@ func (rh repoHandler) repoCommit(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (rh repoHandler) repoPatch(w http.ResponseWriter, r *http.Request) error {
-	repoName := chi.URLParam(r, "repo")
-	repo, err := git.NewRepo(rh.s.RepoDir, repoName)
-	if err != nil {
-		httpErr := http.StatusInternalServerError
-		if errors.Is(err, fs.ErrNotExist) {
-			httpErr = http.StatusNotFound
-		}
-		return httperr.Status(err, httpErr)
-	}
-	if repo.Meta.Private {
-		return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
-	}
+	repo := r.Context().Value(repoCtxKey).(*git.Repo)
 
 	commit, err := repo.Commit(chi.URLParam(r, "commit"))
 	if err != nil {
