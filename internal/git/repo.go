@@ -15,15 +15,18 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
+// Repo is a git repository
 type Repo struct {
 	path string
 	Meta RepoMeta
 }
 
+// Name returns the human-friendly name, the dir name without the .git suffix
 func (r Repo) Name() string {
 	return strings.TrimSuffix(filepath.Base(r.path), ".git")
 }
 
+// NewRepo constructs a Repo given a dir and name
 func NewRepo(dir, name string) (*Repo, error) {
 	if !strings.HasSuffix(name, ".git") {
 		name += ".git"
@@ -98,6 +101,7 @@ type Commit struct {
 	Author    string
 	Email     string
 	When      time.Time
+
 	// Extra
 	Stats CommitStats
 	Patch string
@@ -125,19 +129,22 @@ type CommitFileEntry struct {
 	Commit string
 }
 
+// Short returns the first eight characters of the SHA
 func (c Commit) Short() string {
 	return c.SHA[:8]
 }
 
+// Summary returns the first line of the commit, suitable for a <summary>
 func (c Commit) Summary() string {
 	return strings.Split(c.Message, "\n")[0]
 }
 
+// Details returns all lines *after* the first, suitable for <details>
 func (c Commit) Details() string {
 	return strings.Join(strings.Split(c.Message, "\n")[1:], "\n")
 }
 
-// Commit gets a specific commit by SHA
+// Commit gets a specific commit by SHA, including all commit information
 func (r Repo) Commit(sha string) (Commit, error) {
 	repo, err := r.Git()
 	if err != nil {
@@ -147,7 +154,7 @@ func (r Repo) Commit(sha string) (Commit, error) {
 	return commit(repo, sha, true)
 }
 
-// LastCommit returns the last commit of the repo
+// LastCommit returns the last commit of the repo without any extra information
 func (r Repo) LastCommit() (Commit, error) {
 	repo, err := r.Git()
 	if err != nil {
@@ -313,15 +320,8 @@ func (r Repo) Tags() ([]Tag, error) {
 	var tags []Tag
 	if err := tgs.ForEach(func(tag *plumbing.Reference) error {
 		obj, err := repo.TagObject(tag.Hash())
-		switch err {
-		case nil:
-			tags = append(tags, Tag{
-				Name:       obj.Name,
-				Annotation: obj.Message,
-				Signature:  obj.PGPSignature,
-				When:       obj.Tagger.When,
-			})
-		case plumbing.ErrObjectNotFound:
+		switch {
+		case errors.Is(err, plumbing.ErrObjectNotFound):
 			commit, err := repo.CommitObject(tag.Hash())
 			if err != nil {
 				return err
@@ -331,6 +331,13 @@ func (r Repo) Tags() ([]Tag, error) {
 				Annotation: commit.Message,
 				Signature:  commit.PGPSignature,
 				When:       commit.Author.When,
+			})
+		case err == nil:
+			tags = append(tags, Tag{
+				Name:       obj.Name,
+				Annotation: obj.Message,
+				Signature:  obj.PGPSignature,
+				When:       obj.Tagger.When,
 			})
 		default:
 			return err

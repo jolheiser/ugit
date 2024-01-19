@@ -1,4 +1,4 @@
-package html
+package markup
 
 import (
 	"io"
@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	// Formatter is the default formatter
 	Formatter = html.New(
 		html.WithLineNumbers(true),
 		html.WithLinkableLineNumbers(true, "L"),
@@ -19,6 +20,7 @@ var (
 	basicFormatter = html.New(
 		html.WithClasses(true),
 	)
+	// Code is the entrypoint for formatting
 	Code = code{}
 )
 
@@ -44,6 +46,7 @@ func (c code) setup(source []byte, fileName string) (chroma.Iterator, *chroma.St
 	return iter, style, nil
 }
 
+// Basic formats code without any extras
 func (c code) Basic(source []byte, fileName string, writer io.Writer) error {
 	iter, style, err := c.setup(source, fileName)
 	if err != nil {
@@ -52,6 +55,7 @@ func (c code) Basic(source []byte, fileName string, writer io.Writer) error {
 	return basicFormatter.Format(writer, style, iter)
 }
 
+// Convert formats code with line numbers, links, etc.
 func (c code) Convert(source []byte, fileName string, writer io.Writer) error {
 	iter, style, err := c.setup(source, fileName)
 	if err != nil {

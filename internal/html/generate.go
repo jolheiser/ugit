@@ -6,11 +6,10 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
+	"go.jolheiser.com/ugit/internal/html/markup"
 	"go/format"
 	"os"
 	"os/exec"
-
-	"go.jolheiser.com/ugit/internal/html"
 
 	"github.com/alecthomas/chroma/v2/styles"
 )
@@ -33,6 +32,7 @@ func main() {
 	}
 }
 
+// Generate tailwind code from templ templates and combine with other misc CSS
 func tailwind() error {
 	fmt.Println("generating tailwind...")
 
@@ -48,13 +48,13 @@ func tailwind() error {
 	fmt.Println("generating chroma styles...")
 
 	latte := styles.Get("catppuccin-latte")
-	if err := html.Formatter.WriteCSS(tmp, latte); err != nil {
+	if err := markup.Formatter.WriteCSS(tmp, latte); err != nil {
 		return err
 	}
 
 	tmp.WriteString("@media (prefers-color-scheme: dark) {")
 	mocha := styles.Get("catppuccin-mocha")
-	if err := html.Formatter.WriteCSS(tmp, mocha); err != nil {
+	if err := markup.Formatter.WriteCSS(tmp, mocha); err != nil {
 		return err
 	}
 	tmp.WriteString("}")

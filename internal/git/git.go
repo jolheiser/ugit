@@ -51,6 +51,7 @@ func PathExists(path string) (bool, error) {
 	return true, err
 }
 
+// Tree returns the git tree at a given ref/rev
 func (r Repo) Tree(ref string) (*object.Tree, error) {
 	g, err := r.Git()
 	if err != nil {
@@ -70,6 +71,7 @@ func (r Repo) Tree(ref string) (*object.Tree, error) {
 	return c.Tree()
 }
 
+// FileInfo is the information for a file in a tree
 type FileInfo struct {
 	Path  string
 	IsDir bool
@@ -77,10 +79,13 @@ type FileInfo struct {
 	Size  string
 }
 
+// Name returns the last part of the FileInfo.Path
 func (f FileInfo) Name() string {
 	return filepath.Base(f.Path)
 }
 
+// Dir returns the given dirpath in the given ref as a slice of FileInfo
+// Sorted alphabetically, dirs first
 func (r Repo) Dir(ref, path string) ([]FileInfo, error) {
 	t, err := r.Tree(ref)
 	if err != nil {
@@ -119,6 +124,7 @@ func (r Repo) Dir(ref, path string) ([]FileInfo, error) {
 	return fis, nil
 }
 
+// FileContent returns the content of a file in the git tree at a given ref/rev
 func (r Repo) FileContent(ref, file string) (string, error) {
 	t, err := r.Tree(ref)
 	if err != nil {

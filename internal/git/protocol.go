@@ -20,16 +20,19 @@ import (
 	"github.com/go-git/go-git/v5/utils/ioutil"
 )
 
+// ReadWriteContexter is the interface required to operate on git protocols
 type ReadWriteContexter interface {
 	io.ReadWriteCloser
 	Context() context.Context
 }
 
+// Protocol handles the endpoint and server of the git protocols
 type Protocol struct {
 	endpoint *transport.Endpoint
 	server   transport.Transport
 }
 
+// NewProtocol constructs a Protocol for a given repo
 func NewProtocol(repoPath string) (Protocol, error) {
 	endpoint, err := transport.NewEndpoint("/")
 	if err != nil {
@@ -44,6 +47,7 @@ func NewProtocol(repoPath string) (Protocol, error) {
 	}, nil
 }
 
+// HTTPInfoRefs handles the inforef part of the HTTP protocol
 func (p Protocol) HTTPInfoRefs(rwc ReadWriteContexter) error {
 	session, err := p.server.NewUploadPackSession(p.endpoint, nil)
 	if err != nil {
@@ -73,10 +77,12 @@ func (p Protocol) infoRefs(rwc ReadWriteContexter, session transport.UploadPackS
 	return nil
 }
 
+// HTTPUploadPack handles the upload-pack process for HTTP
 func (p Protocol) HTTPUploadPack(rwc ReadWriteContexter) error {
 	return p.uploadPack(rwc, false)
 }
 
+// SSHUploadPack handles the upload-pack process for SSH
 func (p Protocol) SSHUploadPack(rwc ReadWriteContexter) error {
 	return p.uploadPack(rwc, true)
 }
@@ -112,6 +118,7 @@ func (p Protocol) uploadPack(rwc ReadWriteContexter, ssh bool) error {
 	return nil
 }
 
+// SSHReceivePack handles the receive-pack process for SSH
 func (p Protocol) SSHReceivePack(rwc ReadWriteContexter, repo *Repo) error {
 	buf := bufio.NewReader(rwc)
 
@@ -213,6 +220,7 @@ func handlePushOptions(repo *Repo, opts []*packp.Option) error {
 	return nil
 }
 
+// UpdateServerInfo handles updating server info for the git repo
 func UpdateServerInfo(repo string) error {
 	r, err := git.PlainOpen(repo)
 	if err != nil {

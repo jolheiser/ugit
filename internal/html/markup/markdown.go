@@ -1,4 +1,4 @@
-package html
+package markup
 
 import (
 	"bytes"
@@ -48,6 +48,7 @@ var markdown = goldmark.New(
 	),
 )
 
+// Readme transforms a readme, potentially from markdown, into HTML
 func Readme(repo *git.Repo, ref, path string) (string, error) {
 	var readme string
 	var err error
@@ -98,6 +99,9 @@ type markdownContext struct {
 
 type astTransformer struct{}
 
+// Transform does two main things
+// 1. Changes images to work relative to the source and wraps them in links
+// 2. Changes links to work relative to the source
 func (a astTransformer) Transform(node *ast.Document, _ text.Reader, pc parser.Context) {
 	_ = ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
