@@ -26,6 +26,11 @@ func (r Repo) Name() string {
 	return strings.TrimSuffix(filepath.Base(r.path), ".git")
 }
 
+// Path returns the path to the Repo
+func (r Repo) Path() string {
+	return r.path
+}
+
 // NewRepo constructs a Repo given a dir and name
 func NewRepo(dir, name string) (*Repo, error) {
 	if !strings.HasSuffix(name, ".git") {

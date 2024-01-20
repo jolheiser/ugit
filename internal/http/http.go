@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"go.jolheiser.com/ugit/assets"
 	"go.jolheiser.com/ugit/internal/git"
@@ -61,22 +62,18 @@ func New(settings Settings) Server {
 	mux.Use(middleware.Recoverer)
 
 	rh := repoHandler{s: settings}
-	mux.Route("/{repo}.git", func(r chi.Router) {
-		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "/"+chi.URLParam(r, "repo"), http.StatusFound)
-		})
-		r.Get("/info/refs", httperr.Handler(rh.infoRefs))
-		r.Post("/git-upload-pack", httperr.Handler(rh.uploadPack))
-	})
-
 	mux.Route("/", func(r chi.Router) {
 		r.Get("/", httperr.Handler(rh.index))
 		r.Route("/{repo}", func(r chi.Router) {
 			r.Use(rh.repoMiddleware)
 			r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+				repo := r.Context().Value(repoCtxKey).(*git.Repo)
 				if r.URL.Query().Has("go-get") {
-					repo := chi.URLParam(r, "repo")
-					w.Write([]byte(settings.goGet(repo)))
+					w.Write([]byte(settings.goGet(repo.Name())))
+					return
+				}
+				if strings.HasSuffix(chi.URLParam(r, "repo"), ".git") {
+					http.Redirect(w, r, "/"+repo.Name(), http.StatusFound)
 					return
 				}
 				rh.repoTree("", "").ServeHTTP(w, r)
@@ -88,6 +85,10 @@ func New(settings Settings) Server {
 			r.Get("/log/{ref}", httperr.Handler(rh.repoLog))
 			r.Get("/commit/{commit}", httperr.Handler(rh.repoCommit))
 			r.Get("/commit/{commit}.patch", httperr.Handler(rh.repoPatch))
+
+			// Protocol
+			r.Get("/info/refs", httperr.Handler(rh.infoRefs))
+			r.Post("/git-upload-pack", httperr.Handler(rh.uploadPack))
 		})
 	})
 
