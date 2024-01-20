@@ -36,7 +36,7 @@ func slashDir(name string, isDir bool) string {
 }
 
 templ repoTreeComponent(rtcc RepoTreeComponentContext) {
-	<div class="grid grid-cols-8 text-text py-5 rounded px-5 bg-base/50">
+	<div class="grid grid-cols-8 text-text py-5 rounded px-5 bg-base dark:bg-base/50">
 		if rtcc.Back != "" {
 			<div class="col-span-2"></div>
 			<div class="col-span-6"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s", rtcc.Repo, rtcc.Ref, rtcc.Back)) }>..</a></div>

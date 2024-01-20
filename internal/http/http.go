@@ -122,6 +122,7 @@ func (rh repoHandler) repoHeaderContext(repo *git.Repo, r *http.Request) html.Re
 		Description: repo.Meta.Description,
 		Name:        chi.URLParam(r, "repo"),
 		Ref:         ref,
+		CloneURL:    rh.s.CloneURL,
 	}
 }
 

@@ -53,8 +53,7 @@ func (rh repoHandler) index(w http.ResponseWriter, r *http.Request) error {
 			Email:    rh.s.Profile.Email,
 			Links:    links,
 		},
-		CloneURL: rh.s.CloneURL,
-		Repos:    repos,
+		Repos: repos,
 	}).Render(r.Context(), w); err != nil {
 		return httperr.Error(err)
 	}

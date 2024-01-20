@@ -5,6 +5,6 @@ type ReadmeComponentContext struct {
 }
 
 templ readmeComponent(rcc ReadmeComponentContext) {
-	<div class="bg-base/50 px-5 rounded markdown">@templ.Raw(rcc.Markdown)</div>
+	<div class="bg-base dark:bg-base/50 px-5 rounded markdown">@templ.Raw(rcc.Markdown)</div>
 }
 
