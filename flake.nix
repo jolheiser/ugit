@@ -31,7 +31,7 @@
         path = ./.;
       });
       subPackages = ["cmd/ugitd"];
-      vendorHash = "sha256-2vIccmJs6YitRndccQOnUuFZCIbwzi0NfRzbixaLVTo=";
+      vendorHash = "sha256-8kI94hcJupAUye6cEAmIlN+CrtYSXlgoAlmpyXArfF8=";
       meta = with pkgs.lib; {
         description = "Minimal git server";
         homepage = "https://git.jolheiser.com/ugit";
