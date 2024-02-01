@@ -1,5 +1,5 @@
 .markdown * {
-  all: revert;
+  all: revert-layer;
   color: rgb(var(--ctp-text));
 }
 
