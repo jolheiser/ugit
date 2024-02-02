@@ -1,6 +1,9 @@
-# ugit
-
-<img alt="ugit logo" width="50" style="width:50px;" src="./assets/ugit.svg" />
+<p align="center">
+    <picture>
+      <img alt="ugit logo" width="250" src="./assets/ugit.svg" />
+    </picture>
+    <h3 align="center">ugit</h3>
+</p>
 
 Minimal git server
 
