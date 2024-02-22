@@ -132,7 +132,6 @@
           group = "${cfg.group}";
           isSystemUser = true;
           isNormalUser = false;
-          useDefaultShell = true;
           description = "user for ugit service";
         };
         users.groups."${cfg.group}" = {};
@@ -151,7 +150,7 @@
           in "${cfg.package}/bin/ugitd ${builtins.concatStringsSep " " args}";
           wantedBy = ["multi-user.target"];
           after = ["network-online.target"];
-          path = [cfg.package pkgs.git];
+          path = [cfg.package pkgs.git pkgs.bash];
           serviceConfig = {
             User = cfg.user;
             Group = cfg.group;
