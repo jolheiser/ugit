@@ -150,6 +150,7 @@
           in "${cfg.package}/bin/ugitd ${builtins.concatStringsSep " " args}";
           wantedBy = ["multi-user.target"];
           after = ["network-online.target"];
+          path = [cfg.package pkgs.git];
           serviceConfig = {
             User = cfg.user;
             Group = cfg.group;
