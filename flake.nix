@@ -25,7 +25,7 @@
     tailwind-ctp-lsp = inputs.tailwind-ctp-lsp.packages.${system}.default;
     ugit = pkgs.buildGoModule rec {
       pname = "ugitd";
-      version = "0.0.1";
+      version = self.rev or "dev";
       src = pkgs.nix-gitignore.gitignoreSource [] (builtins.path {
         name = pname;
         path = ./.;
