@@ -132,6 +132,7 @@
           group = "${cfg.group}";
           isSystemUser = true;
           isNormalUser = false;
+          useDefaultShell = true;
           description = "user for ugit service";
         };
         users.groups."${cfg.group}" = {};
