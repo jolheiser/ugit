@@ -6,6 +6,12 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"strconv"
+	"strings"
+
+	"github.com/go-git/go-git/v5/plumbing/protocol/packp"
+	"go.jolheiser.com/ugit/internal/git"
 
 	"go.jolheiser.com/ugit/internal/http"
 	"go.jolheiser.com/ugit/internal/ssh"
@@ -16,11 +22,20 @@ import (
 )
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "pre-receive-hook" {
+		preReceive()
+		return
+	}
+
 	args, err := parseArgs(os.Args[1:])
 	if err != nil {
 		if errors.Is(err, flag.ErrHelp) {
 			return
 		}
+		panic(err)
+	}
+	args.RepoDir, err = filepath.Abs(args.RepoDir)
+	if err != nil {
 		panic(err)
 	}
 
@@ -32,7 +47,7 @@ func main() {
 		ssh.DefaultLogger = ssh.NoopLogger
 	}
 
-	if err := os.MkdirAll(args.RepoDir, os.ModePerm); err != nil {
+	if err := requiredFS(args.RepoDir); err != nil {
 		panic(err)
 	}
 
@@ -82,4 +97,63 @@ func main() {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, os.Kill, os.Interrupt)
 	<-ch
+}
+
+func requiredFS(repoDir string) error {
+	if err := os.MkdirAll(repoDir, os.ModePerm); err != nil {
+		return err
+	}
+
+	if !git.RequiresHook {
+		return nil
+	}
+	bin, err := os.Executable()
+	if err != nil {
+		return err
+	}
+
+	fp := filepath.Join(repoDir, "hooks")
+	if err := os.MkdirAll(fp, os.ModePerm); err != nil {
+		return err
+	}
+	fp = filepath.Join(fp, "pre-receive")
+
+	fi, err := os.Create(fp)
+	if err != nil {
+		return err
+	}
+	fi.WriteString("#!/usr/bin/env bash\n")
+	fi.WriteString(fmt.Sprintf("%s pre-receive-hook\n", bin))
+	fi.Close()
+
+	return os.Chmod(fp, 0o755)
+}
+
+func preReceive() {
+	repoDir, ok := os.LookupEnv("UGIT_REPODIR")
+	if !ok {
+		panic("UGIT_REPODIR is not set")
+	}
+
+	opts := make([]*packp.Option, 0)
+	if pushCount, err := strconv.Atoi(os.Getenv("GIT_PUSH_OPTION_COUNT")); err == nil {
+		for idx := 0; idx < pushCount; idx++ {
+			opt := os.Getenv(fmt.Sprintf("GIT_PUSH_OPTION_%d", idx))
+			kv := strings.SplitN(opt, "=", 2)
+			if len(kv) == 2 {
+				opts = append(opts, &packp.Option{
+					Key:   kv[0],
+					Value: kv[1],
+				})
+			}
+		}
+	}
+
+	repo, err := git.NewRepo(filepath.Dir(repoDir), filepath.Base(repoDir))
+	if err != nil {
+		panic(err)
+	}
+	if err := git.HandlePushOptions(repo, opts); err != nil {
+		panic(err)
+	}
 }

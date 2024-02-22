@@ -3,10 +3,11 @@ package http
 import (
 	"bytes"
 	"errors"
-	"go.jolheiser.com/ugit/internal/html/markup"
 	"mime"
 	"net/http"
 	"path/filepath"
+
+	"go.jolheiser.com/ugit/internal/html/markup"
 
 	"go.jolheiser.com/ugit/internal/git"
 	"go.jolheiser.com/ugit/internal/html"

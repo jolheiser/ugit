@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"strings"
 	"time"
 
 	"go.jolheiser.com/ugit/internal/git"
@@ -19,6 +20,9 @@ func (rh repoHandler) index(w http.ResponseWriter, r *http.Request) error {
 
 	repos := make([]*git.Repo, 0, len(repoPaths))
 	for _, repoName := range repoPaths {
+		if !strings.HasSuffix(repoName.Name(), ".git") {
+			continue
+		}
 		repo, err := git.NewRepo(rh.s.RepoDir, repoName.Name())
 		if err != nil {
 			return httperr.Error(err)

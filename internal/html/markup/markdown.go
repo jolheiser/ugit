@@ -3,11 +3,12 @@ package markup
 import (
 	"bytes"
 	"fmt"
-	"golang.org/x/net/html"
 	"io"
 	"net/url"
 	"path/filepath"
 	"strings"
+
+	"golang.org/x/net/html"
 
 	"go.jolheiser.com/ugit/internal/git"
 

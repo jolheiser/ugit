@@ -6,10 +6,11 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
-	"go.jolheiser.com/ugit/internal/html/markup"
 	"go/format"
 	"os"
 	"os/exec"
+
+	"go.jolheiser.com/ugit/internal/html/markup"
 
 	"github.com/alecthomas/chroma/v2/styles"
 )
