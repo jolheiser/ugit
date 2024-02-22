@@ -27,7 +27,7 @@ func (c CmdProtocol) HTTPInfoRefs(ctx ReadWriteContexter) error {
 	if err := pkt.Flush(); err != nil {
 		return err
 	}
-	return gitService(ctx, "receive-pack", string(c), "--stateless-rpc", "--advertise-refs")
+	return gitService(ctx, "upload-pack", string(c), "--stateless-rpc", "--advertise-refs")
 }
 
 func (c CmdProtocol) HTTPUploadPack(ctx ReadWriteContexter) error {
@@ -45,6 +45,7 @@ func (c CmdProtocol) SSHReceivePack(ctx ReadWriteContexter, _ *Repo) error {
 func gitService(ctx ReadWriteContexter, command, repoDir string, args ...string) error {
 	cmd := exec.CommandContext(ctx.Context(), "git")
 	cmd.Args = append(cmd.Args, []string{
+		"-c", "protocol.version=2",
 		"-c", "uploadpack.allowFilter=true",
 		"-c", "receive.advertisePushOptions=true",
 		"-c", fmt.Sprintf("core.hooksPath=%s", filepath.Join(filepath.Dir(repoDir), "hooks")),
@@ -54,9 +55,10 @@ func gitService(ctx ReadWriteContexter, command, repoDir string, args ...string)
 		cmd.Args = append(cmd.Args, args...)
 	}
 	cmd.Args = append(cmd.Args, repoDir)
-	cmd.Env = append(os.Environ(), fmt.Sprintf("UGIT_REPODIR=%s", repoDir))
+	cmd.Env = append(os.Environ(), fmt.Sprintf("UGIT_REPODIR=%s", repoDir), "GIT_PROTOCOL=version=2")
 	cmd.Stdin = ctx
 	cmd.Stdout = ctx
+	fmt.Println(cmd.Env, cmd.String())
 
 	return cmd.Run()
 }
