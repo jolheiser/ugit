@@ -6,6 +6,7 @@ import (
 	"mime"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"go.jolheiser.com/ugit/internal/html/markup"
 
@@ -179,6 +180,38 @@ func (rh repoHandler) repoPatch(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	w.Write([]byte(commit.Patch))
+
+	return nil
+}
+
+func (rh repoHandler) repoSearch(w http.ResponseWriter, r *http.Request) error {
+	repo := r.Context().Value(repoCtxKey).(*git.Repo)
+
+	var results []git.GrepResult
+	search := r.URL.Query().Get("q")
+	if q := strings.TrimSpace(search); q != "" {
+		var err error
+		results, err = repo.Grep(q)
+		if err != nil {
+			return httperr.Error(err)
+		}
+		for idx, result := range results {
+			var buf bytes.Buffer
+			if err := markup.Snippet([]byte(result.Content), filepath.Base(result.File), result.StartLine, &buf); err != nil {
+				return httperr.Error(err)
+			}
+			results[idx].Content = buf.String()
+		}
+
+	}
+
+	if err := html.RepoSearch(html.SearchContext{
+		BaseContext:                rh.baseContext(),
+		RepoHeaderComponentContext: rh.repoHeaderContext(repo, r),
+		Results:                    results,
+	}).Render(r.Context(), w); err != nil {
+		return httperr.Error(err)
+	}
 
 	return nil
 }

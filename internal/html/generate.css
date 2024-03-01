@@ -43,7 +43,7 @@
   background: rgb(var(--ctp-surface0)) !important;
 }
 
-.commit .chroma {
+.code>.chroma {
   border-radius: .25rem;
   padding: 1em;
 }

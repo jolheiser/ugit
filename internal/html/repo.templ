@@ -21,6 +21,8 @@ templ repoHeaderComponent(rhcc RepoHeaderComponentContext) {
 		{ " - " }
 		<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/log/%s", rhcc.Name, rhcc.Ref)) }>log</a>
 		{ " - " }
+		<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/search", rhcc.Name)) }>search</a>
+		{ " - " }
 		<pre class="text-text inline select-all bg-base dark:bg-base/50 p-1 rounded">{ fmt.Sprintf("%s/%s.git", rhcc.CloneURL, rhcc.Name) }</pre>
 	</div>
 	<div class="text-text/80 mb-1">{ rhcc.Description }</div>

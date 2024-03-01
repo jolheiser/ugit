@@ -10,7 +10,11 @@ type RepoFileContext struct {
 templ RepoFile(rfc RepoFileContext) {
 	@base(rfc.BaseContext) {
 		@repoHeaderComponent(rfc.RepoHeaderComponentContext)
-		<div class="mt-2 text-text"><a class="text-text underline decoration-text/50 decoration-dashed hover:decoration-solid" href="?raw">Raw</a><span>{ " - " }{ rfc.Path }</span>@templ.Raw(rfc.Code)</div>
+		<div class="mt-2 text-text">
+			<a class="text-text underline decoration-text/50 decoration-dashed hover:decoration-solid" href="?raw">Raw</a>
+			<span>{ " - " }{ rfc.Path }</span>
+			<div class="code">@templ.Raw(rfc.Code)</div>
+		</div>
 	}
 	<script>
 		const lineRe = /#L(\d+)(?:-L(\d+))?/g

@@ -34,7 +34,7 @@ templ RepoCommit(rcc RepoCommitContext) {
 					<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s", rcc.RepoHeaderComponentContext.Name, file.To.Commit, file.To.Path)) }>{ file.To.Path }</a>
 				}
 			</div>
-			<div class="whitespace-pre commit">@templ.Raw(file.Patch)</div>
+			<div class="whitespace-pre code">@templ.Raw(file.Patch)</div>
 		}
 	}
 }

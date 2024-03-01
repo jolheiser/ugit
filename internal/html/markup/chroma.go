@@ -26,7 +26,7 @@ var (
 
 type code struct{}
 
-func (c code) setup(source []byte, fileName string) (chroma.Iterator, *chroma.Style, error) {
+func setup(source []byte, fileName string) (chroma.Iterator, *chroma.Style, error) {
 	lexer := lexers.Match(fileName)
 	if lexer == nil {
 		lexer = lexers.Fallback
@@ -48,7 +48,7 @@ func (c code) setup(source []byte, fileName string) (chroma.Iterator, *chroma.St
 
 // Basic formats code without any extras
 func (c code) Basic(source []byte, fileName string, writer io.Writer) error {
-	iter, style, err := c.setup(source, fileName)
+	iter, style, err := setup(source, fileName)
 	if err != nil {
 		return err
 	}
@@ -57,9 +57,24 @@ func (c code) Basic(source []byte, fileName string, writer io.Writer) error {
 
 // Convert formats code with line numbers, links, etc.
 func (c code) Convert(source []byte, fileName string, writer io.Writer) error {
-	iter, style, err := c.setup(source, fileName)
+	iter, style, err := setup(source, fileName)
 	if err != nil {
 		return err
 	}
 	return Formatter.Format(writer, style, iter)
+}
+
+// Snippet formats code with line numbers starting at a specific line
+func Snippet(source []byte, fileName string, line int, writer io.Writer) error {
+	iter, style, err := setup(source, fileName)
+	if err != nil {
+		return err
+	}
+	formatter := html.New(
+		html.WithLineNumbers(true),
+		html.WithClasses(true),
+		html.LineNumbersInTable(true),
+		html.BaseLineNumber(line),
+	)
+	return formatter.Format(writer, style, iter)
 }
