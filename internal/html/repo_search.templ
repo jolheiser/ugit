@@ -9,18 +9,52 @@ type SearchContext struct {
 	Results []git.GrepResult
 }
 
+func (s SearchContext) DedupeResults() [][]git.GrepResult {
+	var (
+		results        [][]git.GrepResult
+		currentFile    string
+		currentResults []git.GrepResult
+	)
+	for _, result := range s.Results {
+		if result.File == currentFile {
+			currentResults = append(currentResults, result)
+			continue
+		}
+		if currentFile != "" {
+			results = append(results, currentResults)
+		}
+		currentFile = result.File
+		currentResults = []git.GrepResult{result}
+	}
+
+	return results
+}
+
 templ RepoSearch(sc SearchContext) {
 	@base(sc.BaseContext) {
 		@repoHeaderComponent(sc.RepoHeaderComponentContext)
 		<form method="get"><label class="text-text">Search <input class="rounded p-1 mt-2 bg-mantle focus:border-lavender focus:outline-none focus:ring-0" id="search" type="text" name="q" placeholder="search"/></label></form>
-		for _, result := range sc.Results {
-			<div class="text-text mt-5"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s#L%d", sc.RepoHeaderComponentContext.Name, sc.RepoHeaderComponentContext.Ref, result.File, result.Line)) }>{ result.File }</a></div>
-			<div class="code">@templ.Raw(result.Content)</div>
+		for _, results := range sc.DedupeResults() {
+			@repoSearchResult(sc.RepoHeaderComponentContext.Name, sc.RepoHeaderComponentContext.Ref, results)
 		}
 	}
 	<script>
 		const search = new URLSearchParams(window.location.search).get("q");
 		if (search !== "") document.querySelector("#search").value = search;
 	</script>
+}
+
+templ repoSearchResult(repo, ref string, results []git.GrepResult) {
+	<div class="text-text mt-5"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s#L%d", repo, ref, results[0].File, results[0].Line)) }>{ results[0].File }</a></div>
+	<div class="code">@templ.Raw(results[0].Content)</div>
+	if len(results) > 1 {
+		<details class="text-text cursor-pointer">
+			<summary>{ fmt.Sprintf("%d ", len(results[1:])) }more</summary>
+			for _, result := range results[1:] {
+				<div class="text-text mt-5"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s#L%d", repo, ref, result.File, result.Line)) }>{ results[0].File }</a></div>
+				<div class="code">@templ.Raw(result.Content)</div>
+			}
+		</details>
+	}
 }
 
