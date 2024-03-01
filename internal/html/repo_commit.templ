@@ -14,7 +14,7 @@ templ RepoCommit(rcc RepoCommitContext) {
 	@base(rcc.BaseContext) {
 		@repoHeaderComponent(rcc.RepoHeaderComponentContext)
 		<div class="text-text mt-5"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/", rcc.RepoHeaderComponentContext.Name, rcc.Commit.SHA)) }>tree</a>{ " " }<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/log/%s", rcc.RepoHeaderComponentContext.Name, rcc.Commit.SHA)) }>log</a>{ " " }<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/commit/%s.patch", rcc.RepoHeaderComponentContext.Name, rcc.Commit.SHA)) }>patch</a></div>
-		<div class="text-text whitespace-pre mt-5">{ rcc.Commit.Message }</div>
+		<div class="text-text whitespace-pre mt-5 p-3 bg-base rounded">{ rcc.Commit.Message }</div>
 		<div class="text-text mt-3">
 			<div>{ rcc.Commit.Author }{ " " }<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("mailto:%s", rcc.Commit.Email)) }>{ fmt.Sprintf("<%s>", rcc.Commit.Email) }</a></div>
 			<div title={ rcc.Commit.When.Format("01/02/2006 03:04:05 PM") }>{ humanize.Time(rcc.Commit.When) }</div>

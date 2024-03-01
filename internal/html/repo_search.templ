@@ -12,7 +12,7 @@ type SearchContext struct {
 templ RepoSearch(sc SearchContext) {
 	@base(sc.BaseContext) {
 		@repoHeaderComponent(sc.RepoHeaderComponentContext)
-		<form method="get"><label class="text-text">Search <input class="rounded p-1 mt-2 bg-mantle focus:border-lavender" id="search" type="text" name="q" placeholder="search"/></label></form>
+		<form method="get"><label class="text-text">Search <input class="rounded p-1 mt-2 bg-mantle focus:border-lavender focus:outline-none focus:ring-0" id="search" type="text" name="q" placeholder="search"/></label></form>
 		for _, result := range sc.Results {
 			<div class="text-text mt-5"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s#L%d", sc.RepoHeaderComponentContext.Name, sc.RepoHeaderComponentContext.Ref, result.File, result.Line)) }>{ result.File }</a></div>
 			<div class="code">@templ.Raw(result.Content)</div>

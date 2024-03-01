@@ -41,9 +41,6 @@ var markdown = goldmark.New(
 			highlighting.WithStyle("catppuccin-mocha"),
 			highlighting.WithFormatOptions(
 				chromahtml.WithClasses(true),
-				chromahtml.WithLineNumbers(true),
-				chromahtml.WithLinkableLineNumbers(true, "md-"),
-				chromahtml.LineNumbersInTable(true),
 			),
 		),
 	),

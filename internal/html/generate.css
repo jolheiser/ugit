@@ -13,8 +13,8 @@
   text-decoration-style: solid;
 }
 
-.chroma {
-  font-size: small;
+.markdown .chroma {
+  @apply p-3 rounded;
 }
 
 .chroma * {
@@ -44,6 +44,5 @@
 }
 
 .code>.chroma {
-  border-radius: .25rem;
-  padding: 1em;
+  @apply text-sm p-3 rounded;
 }

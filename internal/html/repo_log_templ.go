@@ -48,7 +48,7 @@ func RepoLog(rlc RepoLogContext) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			for _, commit := range rlc.Commits {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"col-span-4\"><div><a class=\"underline decoration-text/50 decoration-dashed hover:decoration-solid\" href=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"col-span-5\"><div><a class=\"underline decoration-text/50 decoration-dashed hover:decoration-solid\" href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -75,7 +75,7 @@ func RepoLog(rlc RepoLogContext) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if commit.Signature != "" {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<details class=\"col-span-8 whitespace-pre\"><summary class=\"cursor-pointer\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<details class=\"whitespace-pre\"><summary class=\"cursor-pointer\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -84,20 +84,20 @@ func RepoLog(rlc RepoLogContext) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</summary><code>")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</summary><div class=\"p-3 bg-base rounded\"><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(commit.Signature)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 20, Col: 124}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 22, Col: 64}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</code></details>")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</code></div></details>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -114,26 +114,26 @@ func RepoLog(rlc RepoLogContext) templ.Component {
 					var templ_7745c5c3_Var7 string
 					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(commit.Summary())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 24, Col: 66}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 28, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</summary>")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</summary><div class=\"p-3 bg-base rounded\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var8 string
 					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(commit.Details())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 24, Col: 96}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 29, Col: 59}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</details>")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></details>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -141,21 +141,21 @@ func RepoLog(rlc RepoLogContext) templ.Component {
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(commit.Message)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 26, Col: 23}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 32, Col: 23}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div class=\"col-span-4\"><div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div class=\"col-span-3\"><div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(commit.Author)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 31, Col: 25}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 37, Col: 25}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -164,7 +164,7 @@ func RepoLog(rlc RepoLogContext) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(" ")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 31, Col: 32}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 37, Col: 32}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -186,7 +186,7 @@ func RepoLog(rlc RepoLogContext) templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("<%s>", commit.Email))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 31, Col: 213}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 37, Col: 213}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -207,7 +207,7 @@ func RepoLog(rlc RepoLogContext) templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(humanize.Time(commit.When))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 32, Col: 93}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_log.templ`, Line: 38, Col: 93}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {

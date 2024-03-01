@@ -15,20 +15,26 @@ templ RepoLog(rlc RepoLogContext) {
 		@repoHeaderComponent(rlc.RepoHeaderComponentContext)
 		<div class="grid grid-cols-8 gap-5 text-text mt-5">
 			for _, commit := range rlc.Commits {
-				<div class="col-span-4">
+				<div class="col-span-5">
 					<div><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/commit/%s", rlc.RepoHeaderComponentContext.Name, commit.SHA)) }>{ commit.Short() }</a></div>
 					if commit.Signature != "" {
-						<details class="col-span-8 whitespace-pre"><summary class="cursor-pointer">Signature</summary><code>{ commit.Signature }</code></details>
+						<details class="whitespace-pre">
+							<summary class="cursor-pointer">Signature</summary>
+							<div class="p-3 bg-base rounded"><code>{ commit.Signature }</code></div>
+						</details>
 					}
 					<div class="whitespace-pre">
 						if commit.Details() != "" {
-							<details><summary class="cursor-pointer">{ commit.Summary() }</summary>{ commit.Details() }</details>
+							<details>
+								<summary class="cursor-pointer">{ commit.Summary() }</summary>
+								<div class="p-3 bg-base rounded">{ commit.Details() }</div>
+							</details>
 						} else {
 							{ commit.Message }
 						}
 					</div>
 				</div>
-				<div class="col-span-4">
+				<div class="col-span-3">
 					<div>{ commit.Author }{ " " }<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("mailto:%s", commit.Email)) }>{ fmt.Sprintf("<%s>", commit.Email) }</a></div>
 					<div title={ commit.When.Format("01/02/2006 03:04:05 PM") }>{ humanize.Time(commit.When) }</div>
 				</div>
