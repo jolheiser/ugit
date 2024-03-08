@@ -4,11 +4,11 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     tailwind-ctp = {
-      url = "git+https://git.jojodev.com/jolheiser/tailwind-ctp";
+      url = "git+https://git.jolheiser.com/tailwind-ctp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     tailwind-ctp-lsp = {
-      url = "git+https://git.jojodev.com/jolheiser/tailwind-ctp-intellisense";
+      url = "git+https://git.jolheiser.com/tailwind-ctp-intellisense";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -31,7 +31,7 @@
         path = ./.;
       });
       subPackages = ["cmd/ugitd"];
-      vendorHash = "sha256-8kI94hcJupAUye6cEAmIlN+CrtYSXlgoAlmpyXArfF8=";
+      vendorHash = nixpkgs.lib.fileContents ./go.mod.sri;
       meta = with pkgs.lib; {
         description = "Minimal git server";
         homepage = "https://git.jolheiser.com/ugit";

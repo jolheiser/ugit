@@ -36,11 +36,11 @@
         "rev": "afca060674b20e0ccecde2d6fe88c887790219a5",
         "revCount": 1,
         "type": "git",
-        "url": "https://git.jojodev.com/jolheiser/tailwind-ctp"
+        "url": "https://git.jolheiser.com/tailwind-ctp"
       },
       "original": {
         "type": "git",
-        "url": "https://git.jojodev.com/jolheiser/tailwind-ctp"
+        "url": "https://git.jolheiser.com/tailwind-ctp"
       }
     },
     "tailwind-ctp-lsp": {
@@ -56,11 +56,11 @@
         "rev": "b321333ad08bf21db242f246b10ad4a50b8fc8a0",
         "revCount": 848,
         "type": "git",
-        "url": "https://git.jojodev.com/jolheiser/tailwind-ctp-intellisense"
+        "url": "https://git.jolheiser.com/tailwind-ctp-intellisense"
       },
       "original": {
         "type": "git",
-        "url": "https://git.jojodev.com/jolheiser/tailwind-ctp-intellisense"
+        "url": "https://git.jolheiser.com/tailwind-ctp-intellisense"
       }
     }
   },
