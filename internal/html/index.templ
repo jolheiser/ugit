@@ -58,11 +58,11 @@ templ Index(ic IndexContext) {
 					</div>
 				}
 			</div>
-			<div class="grid grid-cols-8 gap-1 mt-5">
+			<div class="grid sm:grid-cols-8 gap-1 mt-5">
 				for _, repo := range ic.Repos {
-					<div class="col-span-1 text-blue dark:text-lavender"><a class="underline decoration-blue/50 dark:decoration-lavender/50 decoration-dashed hover:decoration-solid" href={ templ.URL("/" + repo.Name()) }>{ repo.Name() }</a></div>
-					<div class="col-span-5 text-subtext0">{ repo.Meta.Description }</div>
-					<div class="col-span-2 text-text/80" title={ lastCommit(repo, false) }>{ lastCommit(repo, true) }</div>
+					<div class="sm:col-span-1 text-blue dark:text-lavender"><a class="underline decoration-blue/50 dark:decoration-lavender/50 decoration-dashed hover:decoration-solid" href={ templ.URL("/" + repo.Name()) }>{ repo.Name() }</a></div>
+					<div class="sm:col-span-5 text-subtext0">{ repo.Meta.Description }</div>
+					<div class="sm:col-span-2 text-text/80 mb-4 sm:mb-0" title={ lastCommit(repo, false) }>{ lastCommit(repo, true) }</div>
 				}
 			</div>
 		</main>

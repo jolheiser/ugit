@@ -11,8 +11,8 @@ templ RepoFile(rfc RepoFileContext) {
 	@base(rfc.BaseContext) {
 		@repoHeaderComponent(rfc.RepoHeaderComponentContext)
 		<div class="mt-2 text-text">
-			<a class="text-text underline decoration-text/50 decoration-dashed hover:decoration-solid" href="?raw">Raw</a>
-			<span>{ " - " }{ rfc.Path }</span>
+			<span>{ rfc.Path }{ " - " }</span>
+			<a class="text-text underline decoration-text/50 decoration-dashed hover:decoration-solid" href="?raw">raw</a>
 			<div class="code">@templ.Raw(rfc.Code)</div>
 		</div>
 	}

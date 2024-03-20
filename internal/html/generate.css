@@ -34,15 +34,11 @@
   color: rgb(var(--ctp-subtext0)) !important;
 }
 
-.chroma .line {
-  white-space: break-spaces;
-}
-
 .chroma .line.active,
 .chroma .line.active * {
   background: rgb(var(--ctp-surface0)) !important;
 }
 
 .code>.chroma {
-  @apply text-sm p-3 rounded;
+  @apply text-sm p-3 rounded overflow-scroll;
 }

@@ -36,15 +36,15 @@ func slashDir(name string, isDir bool) string {
 }
 
 templ repoTreeComponent(rtcc RepoTreeComponentContext) {
-	<div class="grid grid-cols-8 text-text py-5 rounded px-5 bg-base dark:bg-base/50">
+	<div class="grid grid-cols-3 sm:grid-cols-8 text-text py-5 rounded px-5 gap-x-3 gap-y-1 bg-base dark:bg-base/50">
 		if rtcc.Back != "" {
 			<div class="col-span-2"></div>
-			<div class="col-span-6"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s", rtcc.Repo, rtcc.Ref, rtcc.Back)) }>..</a></div>
+			<div class="sm:col-span-6"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s", rtcc.Repo, rtcc.Ref, rtcc.Back)) }>..</a></div>
 		}
 		for _, fi := range rtcc.Tree {
-			<div class="col-span-1">{ fi.Mode }</div>
-			<div class="col-span-1">{ fi.Size }</div>
-			<div class="col-span-6"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s", rtcc.Repo, rtcc.Ref, fi.Path)) }>{ slashDir(fi.Name(), fi.IsDir) }</a></div>
+			<div class="sm:col-span-1 break-keep">{ fi.Mode }</div>
+			<div class="sm:col-span-1 text-right">{ fi.Size }</div>
+			<div class="sm:col-span-6 overflow-hidden text-ellipsis"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s", rtcc.Repo, rtcc.Ref, fi.Path)) }>{ slashDir(fi.Name(), fi.IsDir) }</a></div>
 		}
 	</div>
 }
