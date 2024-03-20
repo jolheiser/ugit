@@ -149,7 +149,7 @@
             args = ["--config=${configFile}" "--repo-dir=${cfg.repoDir}" "--ssh.authorized-keys=${authorizedKeysPath}" "--ssh.host-key=${cfg.hostKeyFile}"] ++ lib.optionals cfg.debug ["--debug"];
           in "${cfg.package}/bin/ugitd ${builtins.concatStringsSep " " args}";
           wantedBy = ["multi-user.target"];
-          after = ["network-online.target"];
+          after = ["network.target"];
           path = [cfg.package pkgs.git pkgs.bash];
           serviceConfig = {
             User = cfg.user;
