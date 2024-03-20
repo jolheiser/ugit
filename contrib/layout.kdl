@@ -1,0 +1,22 @@
+theme "catppuccin-mocha"
+layout {
+	pane {
+		name "ide"
+		command "nix"
+		args "develop"
+		size "90%"
+	}
+	pane split_direction="vertical" {
+		pane {
+			name "run"
+			command "go"
+			args "run" "./cmd/ugitd"
+			start_suspended true
+		}
+		pane {
+			name "watch"
+			command "nix"
+			args "develop" "--command" "nu" "-c" "watch --glob *.templ ./internal/html/ {|| go generate ./...}"
+		}
+	}
+}
