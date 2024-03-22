@@ -185,7 +185,7 @@ func repoSearchResult(repo, ref string, results []git.GrepResult) templ.Componen
 				return templ_7745c5c3_Err
 			}
 			for _, result := range results[1:] {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"text-text mt-5\"><a class=\"underline decoration-text/50 decoration-dashed hover:decoration-solid\" href=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"text-text mt-5 ml-5\"><a class=\"underline decoration-text/50 decoration-dashed hover:decoration-solid\" href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -201,13 +201,13 @@ func repoSearchResult(repo, ref string, results []git.GrepResult) templ.Componen
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(results[0].File)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_search.templ`, Line: 53, Col: 225}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_search.templ`, Line: 53, Col: 230}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div><div class=\"code\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div><div class=\"code ml-5\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

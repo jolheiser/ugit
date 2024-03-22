@@ -51,8 +51,8 @@ templ repoSearchResult(repo, ref string, results []git.GrepResult) {
 		<details class="text-text cursor-pointer">
 			<summary>{ fmt.Sprintf("%d ", len(results[1:])) }more</summary>
 			for _, result := range results[1:] {
-				<div class="text-text mt-5"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s#L%d", repo, ref, result.File, result.Line)) }>{ results[0].File }</a></div>
-				<div class="code">@templ.Raw(result.Content)</div>
+				<div class="text-text mt-5 ml-5"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s#L%d", repo, ref, result.File, result.Line)) }>{ results[0].File }</a></div>
+				<div class="code ml-5">@templ.Raw(result.Content)</div>
 			}
 		</details>
 	}

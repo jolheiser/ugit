@@ -57,25 +57,25 @@ func RepoRefs(rrc RepoRefsContext) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h3><div class=\"text-text grid grid-cols-8\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h3><div class=\"text-text grid grid-cols-4 sm:grid-cols-8\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, branch := range rrc.Branches {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"col-span-1 font-bold\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"col-span-2 sm:col-span-1 font-bold\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(branch)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_refs.templ`, Line: 19, Col: 47}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_refs.templ`, Line: 19, Col: 61}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"col-span-7\"><a class=\"underline decoration-text/50 decoration-dashed hover:decoration-solid\" href=\"")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"col-span-2 sm:col-span-7\"><a class=\"underline decoration-text/50 decoration-dashed hover:decoration-solid\" href=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -100,7 +100,7 @@ func RepoRefs(rrc RepoRefsContext) templ.Component {
 					var templ_7745c5c3_Var7 string
 					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(" ")
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_refs.templ`, Line: 20, Col: 220}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_refs.templ`, Line: 20, Col: 234}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 					if templ_7745c5c3_Err != nil {
