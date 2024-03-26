@@ -5,6 +5,7 @@ layout {
 		command "nix"
 		args "develop"
 		size "90%"
+		start_suspended true
 	}
 	pane split_direction="vertical" {
 		pane {
