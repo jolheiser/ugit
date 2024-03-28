@@ -57,7 +57,7 @@ func base(bc BaseContext) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></head><body class=\"latte dark:mocha bg-base/50 dark:bg-base/95 max-w-7xl mx-auto my-10\"><h2 class=\"text-text text-xl mb-3\"><a class=\"underline decoration-text/50 decoration-dashed hover:decoration-solid\" href=\"/\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></head><body class=\"latte dark:mocha bg-base/50 dark:bg-base/95 max-w-7xl mx-5 sm:mx-auto my-10\"><h2 class=\"text-text text-xl mb-3\"><a class=\"underline decoration-text/50 decoration-dashed hover:decoration-solid\" href=\"/\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
