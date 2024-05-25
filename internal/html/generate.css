@@ -3,6 +3,11 @@
   color: rgb(var(--ctp-text));
 }
 
+.markdown code,
+.markdown pre {
+  background-color: rgb(var(--ctp-base));
+}
+
 .markdown a {
   color: rgb(var(--ctp-blue));
   text-decoration-line: underline;
