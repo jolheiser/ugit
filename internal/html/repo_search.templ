@@ -4,7 +4,7 @@ import "fmt"
 import "go.jolheiser.com/ugit/internal/git"
 
 type SearchContext struct {
-  BaseContext
+	BaseContext
 	RepoHeaderComponentContext
 	Results []git.GrepResult
 }
@@ -33,9 +33,11 @@ func (s SearchContext) DedupeResults() [][]git.GrepResult {
 templ RepoSearch(sc SearchContext) {
 	@base(sc.BaseContext) {
 		@repoHeaderComponent(sc.RepoHeaderComponentContext)
-		<form method="get"><label class="text-text">Search <input class="rounded p-1 mt-2 bg-mantle focus:border-lavender focus:outline-none focus:ring-0" id="search" type="text" name="q" placeholder="search"/></label></form>
 		for _, results := range sc.DedupeResults() {
 			@repoSearchResult(sc.RepoHeaderComponentContext.Name, sc.RepoHeaderComponentContext.Ref, results)
+		}
+		if len(sc.DedupeResults()) == 0 {
+			<p class="text-text mt-5 text-lg">No results</p>
 		}
 	}
 	<script>
@@ -46,15 +48,18 @@ templ RepoSearch(sc SearchContext) {
 
 templ repoSearchResult(repo, ref string, results []git.GrepResult) {
 	<div class="text-text mt-5"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s#L%d", repo, ref, results[0].File, results[0].Line)) }>{ results[0].File }</a></div>
-	<div class="code">@templ.Raw(results[0].Content)</div>
+	<div class="code">
+		@templ.Raw(results[0].Content)
+	</div>
 	if len(results) > 1 {
 		<details class="text-text cursor-pointer">
 			<summary>{ fmt.Sprintf("%d ", len(results[1:])) }more</summary>
 			for _, result := range results[1:] {
 				<div class="text-text mt-5 ml-5"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/%s#L%d", repo, ref, result.File, result.Line)) }>{ results[0].File }</a></div>
-				<div class="code ml-5">@templ.Raw(result.Content)</div>
+				<div class="code ml-5">
+					@templ.Raw(result.Content)
+				</div>
 			}
 		</details>
 	}
 }
-

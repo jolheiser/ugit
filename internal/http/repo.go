@@ -71,6 +71,9 @@ func (rh repoHandler) repoTree(ref, path string) http.HandlerFunc {
 func (rh repoHandler) repoFile(w http.ResponseWriter, r *http.Request, repo *git.Repo, ref, path string) error {
 	content, err := repo.FileContent(ref, path)
 	if err != nil {
+		if errors.Is(err, object.ErrFileNotFound) {
+			return httperr.Status(err, http.StatusNotFound)
+		}
 		return httperr.Error(err)
 	}
 
