@@ -10,7 +10,7 @@ Minimal git server
 ugit allows cloning via HTTPS/SSH, but can only be pushed to via SSH.
 
 There are no plans to directly support issues or PR workflows, although webhooks are planned and auxillary software may be created to facilitate these things.
-For now, if you wish to collaborate, please send me patches at [john+ugit@jolheiser.com](mailto:john+ugit@jolheiser.com).
+For now, if you wish to collaborate, please send me patches at [ugit@jolheiser.com](mailto:git@jolheiser.com).
 
 Currently all HTML is allowed in markdown, ugit is intended to be run by/for a trusted user.
 
