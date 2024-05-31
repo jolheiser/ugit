@@ -3,6 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    gomod2nix = {
+      url = "github:nix-community/gomod2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     tailwind-ctp = {
       url = "git+https://git.jolheiser.com/tailwind-ctp";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -16,6 +20,7 @@
   outputs = {
     self,
     nixpkgs,
+    gomod2nix,
     tailwind-ctp,
     tailwind-ctp-lsp,
   } @ inputs: let
@@ -23,15 +28,23 @@
     pkgs = nixpkgs.legacyPackages.${system};
     tailwind-ctp = inputs.tailwind-ctp.packages.${system}.default;
     tailwind-ctp-lsp = inputs.tailwind-ctp-lsp.packages.${system}.default;
-    ugit = pkgs.buildGoModule rec {
-      pname = "ugitd";
-      version = self.rev or "dev";
+    ugit = gomod2nix.legacyPackages.${system}.buildGoApplication rec {
+      name = "ugitd";
       src = pkgs.nix-gitignore.gitignoreSource [] (builtins.path {
-        name = pname;
+        inherit name;
         path = ./.;
       });
+      pwd = ./.;
       subPackages = ["cmd/ugitd"];
-      vendorHash = nixpkgs.lib.fileContents ./go.mod.sri;
+      CGO_ENABLED = 0;
+      flags = [
+        "-trimpath"
+      ];
+      ldflags = [
+        "-s"
+        "-w"
+        "-extldflags -static"
+      ];
       meta = with pkgs.lib; {
         description = "Minimal git server";
         homepage = "https://git.jolheiser.com/ugit";
@@ -45,6 +58,7 @@
       nativeBuildInputs = with pkgs; [
         go
         gopls
+        gomod2nix.legacyPackages.${system}.gomod2nix
         templ
         tailwind-ctp
         tailwind-ctp-lsp
