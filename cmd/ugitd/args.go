@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/peterbourgon/ff/v3"
-	"github.com/peterbourgon/ff/v3/ffyaml"
+	"go.jolheiser.com/ffdhall"
 )
 
 type cliArgs struct {
@@ -48,7 +48,7 @@ type profileLink struct {
 
 func parseArgs(args []string) (c cliArgs, e error) {
 	fs := flag.NewFlagSet("ugitd", flag.ContinueOnError)
-	fs.String("config", "ugit.yaml", "Path to config file")
+	fs.String("config", "ugit.dhall", "Path to config file")
 
 	c = cliArgs{
 		RepoDir: ".ugit",
@@ -96,6 +96,6 @@ func parseArgs(args []string) (c cliArgs, e error) {
 		ff.WithEnvVarPrefix("UGIT"),
 		ff.WithConfigFileFlag("config"),
 		ff.WithAllowMissingConfigFile(true),
-		ff.WithConfigFileParser(ffyaml.Parser),
+		ff.WithConfigFileParser(ffdhall.DhallParser),
 	)
 }
