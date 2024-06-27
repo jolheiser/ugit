@@ -128,6 +128,18 @@ func (rh repoHandler) repoHeaderContext(repo *git.Repo, r *http.Request) html.Re
 	}
 }
 
+func (rh repoHandler) repoBreadcrumbContext(repo *git.Repo, r *http.Request, path string) html.RepoBreadcrumbComponentContext {
+	ref := chi.URLParam(r, "ref")
+	if ref == "" {
+		ref, _ = repo.DefaultBranch()
+	}
+	return html.RepoBreadcrumbComponentContext{
+		Repo: chi.URLParam(r, "repo"),
+		Ref:  ref,
+		Path: path,
+	}
+}
+
 // NoopLogger is a no-op logging middleware
 func NoopLogger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

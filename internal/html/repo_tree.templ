@@ -1,38 +1,40 @@
 package html
 
 import (
-    "fmt"
-    "go.jolheiser.com/ugit/internal/git"
+	"fmt"
+	"go.jolheiser.com/ugit/internal/git"
 )
 
 type RepoTreeContext struct {
-  BaseContext
+	BaseContext
 	RepoHeaderComponentContext
-  RepoTreeComponentContext
-  ReadmeComponentContext
-  Description string
+	RepoBreadcrumbComponentContext
+	RepoTreeComponentContext
+	ReadmeComponentContext
+	Description string
 }
 
 templ RepoTree(rtc RepoTreeContext) {
 	@base(rtc.BaseContext) {
 		@repoHeaderComponent(rtc.RepoHeaderComponentContext)
+		@repoBreadcrumbComponent(rtc.RepoBreadcrumbComponentContext)
 		@repoTreeComponent(rtc.RepoTreeComponentContext)
 		@readmeComponent(rtc.ReadmeComponentContext)
 	}
 }
 
 type RepoTreeComponentContext struct {
-    Repo string
-    Ref string
-    Tree []git.FileInfo
-    Back string
+	Repo string
+	Ref  string
+	Tree []git.FileInfo
+	Back string
 }
 
 func slashDir(name string, isDir bool) string {
-    if isDir {
-        return name + "/"
-    }
-    return name
+	if isDir {
+		return name + "/"
+	}
+	return name
 }
 
 templ repoTreeComponent(rtcc RepoTreeComponentContext) {
@@ -48,4 +50,3 @@ templ repoTreeComponent(rtcc RepoTreeComponentContext) {
 		}
 	</div>
 }
-

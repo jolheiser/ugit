@@ -1,0 +1,51 @@
+package html
+
+import (
+	"fmt"
+	"strings"
+)
+
+type RepoBreadcrumbComponentContext struct {
+	Repo string
+	Ref  string
+	Path string
+}
+
+type breadcrumb struct {
+	label string
+	href  string
+	end   bool
+}
+
+func (r RepoBreadcrumbComponentContext) crumbs() []breadcrumb {
+	parts := strings.Split(r.Path, "/")
+	breadcrumbs := []breadcrumb{
+		{
+			label: r.Repo,
+			href:  fmt.Sprintf("/%s/tree/%s", r.Repo, r.Ref),
+		},
+	}
+	for idx, part := range parts {
+		breadcrumbs = append(breadcrumbs, breadcrumb{
+			label: part,
+			href:  breadcrumbs[idx].href + "/" + part,
+		})
+	}
+	breadcrumbs[len(breadcrumbs)-1].end = true
+	return breadcrumbs
+}
+
+templ repoBreadcrumbComponent(rbcc RepoBreadcrumbComponentContext) {
+	if rbcc.Path != "" {
+		<div class="inline-block text-text">
+			for _, crumb := range rbcc.crumbs() {
+				if crumb.end {
+					<span>{ crumb.label }</span>
+				} else {
+					<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(crumb.href) }>{ crumb.label }</a>
+					{ " / " }
+				}
+			}
+		</div>
+	}
+}

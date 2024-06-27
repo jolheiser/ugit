@@ -48,9 +48,10 @@ func (rh repoHandler) repoTree(ref, path string) http.HandlerFunc {
 			back = filepath.Dir(path)
 		}
 		if err := html.RepoTree(html.RepoTreeContext{
-			Description:                repo.Meta.Description,
-			BaseContext:                rh.baseContext(),
-			RepoHeaderComponentContext: rh.repoHeaderContext(repo, r),
+			Description:                    repo.Meta.Description,
+			BaseContext:                    rh.baseContext(),
+			RepoHeaderComponentContext:     rh.repoHeaderContext(repo, r),
+			RepoBreadcrumbComponentContext: rh.repoBreadcrumbContext(repo, r, path),
 			RepoTreeComponentContext: html.RepoTreeComponentContext{
 				Repo: repo.Name(),
 				Ref:  ref,
@@ -92,10 +93,10 @@ func (rh repoHandler) repoFile(w http.ResponseWriter, r *http.Request, repo *git
 	}
 
 	if err := html.RepoFile(html.RepoFileContext{
-		BaseContext:                rh.baseContext(),
-		RepoHeaderComponentContext: rh.repoHeaderContext(repo, r),
-		Code:                       buf.String(),
-		Path:                       path,
+		BaseContext:                    rh.baseContext(),
+		RepoHeaderComponentContext:     rh.repoHeaderContext(repo, r),
+		RepoBreadcrumbComponentContext: rh.repoBreadcrumbContext(repo, r, path),
+		Code:                           buf.String(),
 	}).Render(r.Context(), w); err != nil {
 		return httperr.Error(err)
 	}

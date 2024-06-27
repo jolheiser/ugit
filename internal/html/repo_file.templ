@@ -1,19 +1,22 @@
 package html
 
 type RepoFileContext struct {
-  BaseContext
+	BaseContext
 	RepoHeaderComponentContext
-  Code string
-	Path string
+	RepoBreadcrumbComponentContext
+	Code string
 }
 
 templ RepoFile(rfc RepoFileContext) {
 	@base(rfc.BaseContext) {
 		@repoHeaderComponent(rfc.RepoHeaderComponentContext)
 		<div class="mt-2 text-text">
-			<span>{ rfc.Path }{ " - " }</span>
+			@repoBreadcrumbComponent(rfc.RepoBreadcrumbComponentContext)
+			{ " - " }
 			<a class="text-text underline decoration-text/50 decoration-dashed hover:decoration-solid" href="?raw">raw</a>
-			<div class="code">@templ.Raw(rfc.Code)</div>
+			<div class="code">
+				@templ.Raw(rfc.Code)
+			</div>
 		</div>
 	}
 	<script>
@@ -47,7 +50,7 @@ templ RepoFile(rfc RepoFileContext) {
 					end = 0;
 					anchor = `#L${start}`;
 				}
-				history.pushState(null, null, anchor);
+				history.replaceState(null, null, anchor);
 				activateLines(start, end);
 			});
 		}
@@ -69,4 +72,3 @@ templ RepoFile(rfc RepoFileContext) {
 		
 	</script>
 }
-
