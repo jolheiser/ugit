@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"text/tabwriter"
 
 	"go.jolheiser.com/ugit/internal/git"
 
@@ -104,10 +105,22 @@ func Middleware(repoDir string, cloneURL string, port int, gh Hooks) wish.Middle
 				if err != nil && err != fs.ErrNotExist {
 					log.Error("invalid repository", "error", err)
 				}
+				tw := tabwriter.NewWriter(s, 0, 0, 1, ' ', 0)
 				for _, de := range des {
-					fmt.Fprintln(s, de.Name())
-					fmt.Fprintf(s, "\tgit clone %s/%s\n", cloneURL, de.Name())
+					if filepath.Ext(de.Name()) != ".git" {
+						continue
+					}
+					repo, err := git.NewRepo(repoDir, de.Name())
+					visibility := "❓"
+					if err == nil {
+						visibility = "🔓"
+						if repo.Meta.Private {
+							visibility = "🔒"
+						}
+					}
+					fmt.Fprintf(tw, "%[1]s\t%[3]s\t%[2]s/%[1]s.git\n", strings.TrimSuffix(de.Name(), ".git"), cloneURL, visibility)
 				}
+				tw.Flush()
 			}
 			sh(s)
 		}
