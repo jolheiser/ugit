@@ -12,6 +12,7 @@ import "bytes"
 
 import (
 	"fmt"
+	"path"
 	"strings"
 )
 
@@ -32,13 +33,13 @@ func (r RepoBreadcrumbComponentContext) crumbs() []breadcrumb {
 	breadcrumbs := []breadcrumb{
 		{
 			label: r.Repo,
-			href:  fmt.Sprintf("/%s/tree/%s", r.Repo, r.Ref),
+			href:  fmt.Sprintf("/%s/tree/%s/", r.Repo, r.Ref),
 		},
 	}
 	for idx, part := range parts {
 		breadcrumbs = append(breadcrumbs, breadcrumb{
 			label: part,
-			href:  breadcrumbs[idx].href + "/" + part,
+			href:  path.Join(breadcrumbs[idx].href, part),
 		})
 	}
 	breadcrumbs[len(breadcrumbs)-1].end = true
@@ -72,7 +73,7 @@ func repoBreadcrumbComponent(rbcc RepoBreadcrumbComponentContext) templ.Componen
 					var templ_7745c5c3_Var2 string
 					templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(crumb.label)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_breadcrumb.templ`, Line: 43, Col: 24}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_breadcrumb.templ`, Line: 44, Col: 24}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 					if templ_7745c5c3_Err != nil {
@@ -99,7 +100,7 @@ func repoBreadcrumbComponent(rbcc RepoBreadcrumbComponentContext) templ.Componen
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(crumb.label)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_breadcrumb.templ`, Line: 45, Col: 134}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_breadcrumb.templ`, Line: 46, Col: 134}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
@@ -112,7 +113,7 @@ func repoBreadcrumbComponent(rbcc RepoBreadcrumbComponentContext) templ.Componen
 					var templ_7745c5c3_Var5 string
 					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(" / ")
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_breadcrumb.templ`, Line: 46, Col: 12}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_breadcrumb.templ`, Line: 47, Col: 12}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 					if templ_7745c5c3_Err != nil {
