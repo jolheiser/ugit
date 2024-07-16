@@ -50,6 +50,25 @@ func HandlePushOptions(repo *Repo, opts []*packp.Option) error {
 			}
 			changed = repo.Meta.Private != private
 			repo.Meta.Private = private
+		case "tags":
+			tagValues := strings.Split(opt.Value, ",")
+			for _, tagValue := range tagValues {
+				var remove bool
+				if strings.HasPrefix(tagValue, "-") {
+					remove = true
+					tagValue = strings.TrimPrefix(tagValue, "-")
+				}
+				for idx, tag := range repo.Meta.Tags {
+					if strings.EqualFold(tag, tagValue) {
+						if remove {
+							repo.Meta.Tags = append(repo.Meta.Tags[:idx], repo.Meta.Tags[idx+1:]...)
+						} else {
+							repo.Meta.Tags = append(repo.Meta.Tags, strings.ToLower(tagValue))
+						}
+						break
+					}
+				}
+			}
 		}
 	}
 	if changed {

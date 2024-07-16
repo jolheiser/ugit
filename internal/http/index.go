@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 	"os"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -18,6 +19,8 @@ func (rh repoHandler) index(w http.ResponseWriter, r *http.Request) error {
 		return httperr.Error(err)
 	}
 
+	tagFilter := r.URL.Query().Get("tag")
+
 	repos := make([]*git.Repo, 0, len(repoPaths))
 	for _, repoName := range repoPaths {
 		if !strings.HasSuffix(repoName.Name(), ".git") {
@@ -27,9 +30,13 @@ func (rh repoHandler) index(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return httperr.Error(err)
 		}
-		if !repo.Meta.Private {
-			repos = append(repos, repo)
+		if repo.Meta.Private {
+			continue
 		}
+		if tagFilter != "" && !slices.Contains(repo.Meta.Tags, strings.ToLower(tagFilter)) {
+			continue
+		}
+		repos = append(repos, repo)
 	}
 	sort.Slice(repos, func(i, j int) bool {
 		var when1, when2 time.Time

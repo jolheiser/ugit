@@ -10,8 +10,9 @@ import (
 
 // RepoMeta is the meta information a Repo can have
 type RepoMeta struct {
-	Description string `json:"description"`
-	Private     bool   `json:"private"`
+	Description string   `json:"description"`
+	Private     bool     `json:"private"`
+	Tags        []string `json:"tags"`
 }
 
 // Update updates meta given another RepoMeta

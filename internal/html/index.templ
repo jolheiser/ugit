@@ -7,18 +7,18 @@ import "go.jolheiser.com/ugit/assets"
 type IndexContext struct {
 	BaseContext
 	Profile IndexProfile
-  Repos    []*git.Repo
+	Repos   []*git.Repo
 }
 
 type IndexProfile struct {
 	Username string
-	Email string
-	Links []IndexLink
+	Email    string
+	Links    []IndexLink
 }
 
 type IndexLink struct {
 	Name string
-	URL string
+	URL  string
 }
 
 func lastCommit(repo *git.Repo, human bool) string {
@@ -45,7 +45,9 @@ templ Index(ic IndexContext) {
 				}
 				if ic.Profile.Email != "" {
 					<div class="text-mauve col-span-2">
-						<div class="w-5 h-5 stroke-mauve inline-block mr-1 align-middle">@templ.Raw(string(assets.EmailIcon))</div>
+						<div class="w-5 h-5 stroke-mauve inline-block mr-1 align-middle">
+							@templ.Raw(string(assets.EmailIcon))
+						</div>
 						<a class="underline decoration-mauve/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL("mailto:" + ic.Profile.Email) }>{ ic.Profile.Email }</a>
 					</div>
 				}
@@ -53,19 +55,25 @@ templ Index(ic IndexContext) {
 			<div class="grid grid-cols-1 sm:grid-cols-8">
 				for _, link := range ic.Profile.Links {
 					<div class="text-mauve">
-						<div class="w-5 h-5 stroke-mauve inline-block mr-1 align-middle">@templ.Raw(string(assets.LinkIcon))</div>
+						<div class="w-5 h-5 stroke-mauve inline-block mr-1 align-middle">
+							@templ.Raw(string(assets.LinkIcon))
+						</div>
 						<a class="underline decoration-mauve/50 decoration-dashed hover:decoration-solid" rel="me" href={ templ.SafeURL(link.URL) }>{ link.Name }</a>
 					</div>
 				}
 			</div>
-			<div class="grid sm:grid-cols-8 gap-1 mt-5">
+			<div class="grid sm:grid-cols-8 gap-2 mt-5">
 				for _, repo := range ic.Repos {
-					<div class="sm:col-span-1 text-blue dark:text-lavender"><a class="underline decoration-blue/50 dark:decoration-lavender/50 decoration-dashed hover:decoration-solid" href={ templ.URL("/" + repo.Name()) }>{ repo.Name() }</a></div>
-					<div class="sm:col-span-5 text-subtext0">{ repo.Meta.Description }</div>
-					<div class="sm:col-span-2 text-text/80 mb-4 sm:mb-0" title={ lastCommit(repo, false) }>{ lastCommit(repo, true) }</div>
+					<div class="sm:col-span-2 text-blue dark:text-lavender"><a class="underline decoration-blue/50 dark:decoration-lavender/50 decoration-dashed hover:decoration-solid" href={ templ.URL("/" + repo.Name()) }>{ repo.Name() }</a></div>
+					<div class="sm:col-span-4 text-subtext0">{ repo.Meta.Description }</div>
+					<div class="sm:col-span-1 text-subtext0">
+						for _, tag := range repo.Meta.Tags {
+							<a href={ templ.SafeURL("?tag=" + tag) } class="rounded border-rosewater border-solid border pb-0.5 px-1 mr-1 mb-1 inline-block">{ tag }</a>
+						}
+					</div>
+					<div class="sm:col-span-1 text-text/80 mb-4 sm:mb-0" title={ lastCommit(repo, false) }>{ lastCommit(repo, true) }</div>
 				}
 			</div>
 		</main>
 	}
 }
-
