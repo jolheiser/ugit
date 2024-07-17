@@ -122,6 +122,16 @@ func Middleware(repoDir string, cloneURL string, port int, gh Hooks) wish.Middle
 				}
 				tw.Flush()
 			}
+
+			// Edit repo
+			if len(cmd) == 1 {
+				repo, err := git.NewRepo(cmd[0])
+				if err != nil {
+					Fatal(s, ErrInvalidRepo)
+				}
+
+			}
+
 			sh(s)
 		}
 	}
