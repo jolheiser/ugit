@@ -4,21 +4,21 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"path/filepath"
 	"strconv"
 	"strings"
 
-	"github.com/go-git/go-git/v5/plumbing/protocol/packp"
-	"go.jolheiser.com/ugit/internal/git"
-
-	"go.jolheiser.com/ugit/internal/http"
-	"go.jolheiser.com/ugit/internal/ssh"
-
 	"github.com/charmbracelet/log"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httplog/v2"
+	"github.com/go-git/go-git/v5/plumbing/protocol/packp"
 	"github.com/go-git/go-git/v5/utils/trace"
+	"go.jolheiser.com/ugit/internal/git"
+	"go.jolheiser.com/ugit/internal/http"
+	"go.jolheiser.com/ugit/internal/ssh"
 )
 
 func main() {
@@ -39,12 +39,22 @@ func main() {
 		panic(err)
 	}
 
-	if args.Debug {
+	log.SetLevel(args.Log.Level)
+	middleware.DefaultLogger = httplog.RequestLogger(httplog.NewLogger("ugit", httplog.Options{
+		JSON:     args.Log.JSON,
+		LogLevel: slog.Level(args.Log.Level),
+		Concise:  args.Log.Level != log.DebugLevel,
+	}))
+
+	if args.Log.Level == log.DebugLevel {
 		trace.SetTarget(trace.Packet)
-		log.SetLevel(log.DebugLevel)
 	} else {
 		middleware.DefaultLogger = http.NoopLogger
 		ssh.DefaultLogger = ssh.NoopLogger
+	}
+
+	if args.Log.JSON {
+		log.SetFormatter(log.JSONFormatter)
 	}
 
 	if err := requiredFS(args.RepoDir); err != nil {
@@ -63,7 +73,7 @@ func main() {
 		panic(err)
 	}
 	go func() {
-		fmt.Printf("SSH listening on ssh://localhost:%d\n", sshSettings.Port)
+		log.Debugf("SSH listening on ssh://localhost:%d\n", sshSettings.Port)
 		if err := sshSrv.ListenAndServe(); err != nil {
 			panic(err)
 		}
@@ -88,7 +98,7 @@ func main() {
 	}
 	httpSrv := http.New(httpSettings)
 	go func() {
-		fmt.Printf("HTTP listening on http://localhost:%d\n", httpSettings.Port)
+		log.Debugf("HTTP listening on http://localhost:%d\n", httpSettings.Port)
 		if err := httpSrv.ListenAndServe(); err != nil {
 			panic(err)
 		}
