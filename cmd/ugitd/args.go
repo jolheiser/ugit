@@ -5,17 +5,18 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/charmbracelet/log"
 	"github.com/peterbourgon/ff/v3"
 	"github.com/peterbourgon/ff/v3/ffyaml"
 )
 
 type cliArgs struct {
-	Debug   bool
 	RepoDir string
 	SSH     sshArgs
 	HTTP    httpArgs
 	Meta    metaArgs
 	Profile profileArgs
+	Log     logArgs
 }
 
 type sshArgs struct {
@@ -46,6 +47,11 @@ type profileLink struct {
 	URL  string
 }
 
+type logArgs struct {
+	Level log.Level
+	JSON  bool
+}
+
 func parseArgs(args []string) (c cliArgs, e error) {
 	fs := flag.NewFlagSet("ugitd", flag.ContinueOnError)
 	fs.String("config", "ugit.yaml", "Path to config file")
@@ -66,9 +72,20 @@ func parseArgs(args []string) (c cliArgs, e error) {
 			Title:       "ugit",
 			Description: "Minimal git server",
 		},
+		Log: logArgs{
+			Level: log.InfoLevel,
+		},
 	}
 
-	fs.BoolVar(&c.Debug, "debug", c.Debug, "Debug logging")
+	fs.Func("log.level", "Logging level", func(s string) error {
+		lvl, err := log.ParseLevel(s)
+		if err != nil {
+			return err
+		}
+		c.Log.Level = lvl
+		return nil
+	})
+	fs.BoolVar(&c.Log.JSON, "log.json", c.Log.JSON, "Print logs in JSON(L) format")
 	fs.StringVar(&c.RepoDir, "repo-dir", c.RepoDir, "Path to directory containing repositories")
 	fs.StringVar(&c.SSH.AuthorizedKeys, "ssh.authorized-keys", c.SSH.AuthorizedKeys, "Path to authorized_keys")
 	fs.StringVar(&c.SSH.CloneURL, "ssh.clone-url", c.SSH.CloneURL, "SSH clone URL base")

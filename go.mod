@@ -12,6 +12,7 @@ require (
 	github.com/charmbracelet/wish v1.3.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/go-chi/chi/v5 v5.0.11
+	github.com/go-chi/httplog/v2 v2.1.1
 	github.com/go-git/go-billy/v5 v5.5.0
 	github.com/go-git/go-git/v5 v5.11.0
 	github.com/peterbourgon/ff/v3 v3.4.0

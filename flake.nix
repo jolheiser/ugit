@@ -128,11 +128,6 @@
             description = "Group account under which ugit runs";
           };
 
-          debug = mkOption {
-            type = types.bool;
-            default = false;
-          };
-
           openFirewall = mkOption {
             type = types.bool;
             default = false;
@@ -160,7 +155,7 @@
               if (builtins.length cfg.authorizedKeys) > 0
               then authorizedKeysFile
               else cfg.authorizedKeysFile;
-            args = ["--config=${configFile}" "--repo-dir=${cfg.repoDir}" "--ssh.authorized-keys=${authorizedKeysPath}" "--ssh.host-key=${cfg.hostKeyFile}"] ++ lib.optionals cfg.debug ["--debug"];
+            args = ["--config=${configFile}" "--repo-dir=${cfg.repoDir}" "--ssh.authorized-keys=${authorizedKeysPath}" "--ssh.host-key=${cfg.hostKeyFile}"];
           in "${cfg.package}/bin/ugitd ${builtins.concatStringsSep " " args}";
           wantedBy = ["multi-user.target"];
           after = ["network.target"];

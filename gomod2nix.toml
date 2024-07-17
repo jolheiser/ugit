@@ -70,6 +70,9 @@ schema = 3
   [mod."github.com/go-chi/chi/v5"]
     version = "v5.0.11"
     hash = "sha256-95LKg/OVzhik2HUz6cirHH3eAT4qbHSg52bSvkc+XOY="
+  [mod."github.com/go-chi/httplog/v2"]
+    version = "v2.1.1"
+    hash = "sha256-bMpoHUSNk3Uds9NfrStwhDsdCONR4pJso9sVUhqfidk="
   [mod."github.com/go-git/gcfg"]
     version = "v1.5.1-0.20230307220236-3a3c6141e376"
     hash = "sha256-f4k0gSYuo0/q3WOoTxl2eFaj7WZpdz29ih6CKc8Ude8="
