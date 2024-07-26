@@ -30,9 +30,13 @@ func (rh repoHandler) index(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return httperr.Error(err)
 		}
-		if repo.Meta.Private && !rh.s.ShowPrivate {
-			continue
+		if repo.Meta.Private {
+			if !rh.s.ShowPrivate {
+				continue
+			}
+			repo.Meta.Tags = append(repo.Meta.Tags, "private")
 		}
+
 		if tagFilter != "" && !slices.Contains(repo.Meta.Tags, strings.ToLower(tagFilter)) {
 			continue
 		}

@@ -26,8 +26,11 @@ func (rh repoHandler) repoMiddleware(next http.Handler) http.Handler {
 			}
 			return httperr.Status(err, httpErr)
 		}
-		if repo.Meta.Private && !rh.s.ShowPrivate {
-			return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
+		if repo.Meta.Private {
+			if !rh.s.ShowPrivate {
+				return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
+			}
+			repo.Meta.Tags = append(repo.Meta.Tags, "private")
 		}
 		r = r.WithContext(context.WithValue(r.Context(), repoCtxKey, repo))
 		next.ServeHTTP(w, r)
