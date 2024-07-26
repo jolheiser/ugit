@@ -21,6 +21,7 @@ type cliArgs struct {
 }
 
 type sshArgs struct {
+	Enable         bool
 	AuthorizedKeys string
 	CloneURL       string
 	Port           int
@@ -28,6 +29,7 @@ type sshArgs struct {
 }
 
 type httpArgs struct {
+	Enable   bool
 	CloneURL string
 	Port     int
 }
@@ -54,6 +56,7 @@ type logArgs struct {
 }
 
 type tailscaleArgs struct {
+	Enable   bool
 	Hostname string
 	DataDir  string
 }
@@ -65,12 +68,14 @@ func parseArgs(args []string) (c cliArgs, e error) {
 	c = cliArgs{
 		RepoDir: ".ugit",
 		SSH: sshArgs{
+			Enable:         true,
 			AuthorizedKeys: ".ssh/authorized_keys",
 			CloneURL:       "ssh://localhost:8448",
 			Port:           8448,
 			HostKey:        ".ssh/ugit_ed25519",
 		},
 		HTTP: httpArgs{
+			Enable:   true,
 			CloneURL: "http://localhost:8449",
 			Port:     8449,
 		},
@@ -82,6 +87,7 @@ func parseArgs(args []string) (c cliArgs, e error) {
 			Level: log.InfoLevel,
 		},
 		Tailscale: tailscaleArgs{
+			Enable:   false,
 			Hostname: "ugit",
 			DataDir:  ".tsnet",
 		},
@@ -97,10 +103,12 @@ func parseArgs(args []string) (c cliArgs, e error) {
 	})
 	fs.BoolVar(&c.Log.JSON, "log.json", c.Log.JSON, "Print logs in JSON(L) format")
 	fs.StringVar(&c.RepoDir, "repo-dir", c.RepoDir, "Path to directory containing repositories")
+	fs.BoolVar(&c.SSH.Enable, "ssh.enable", c.SSH.Enable, "Enable SSH server")
 	fs.StringVar(&c.SSH.AuthorizedKeys, "ssh.authorized-keys", c.SSH.AuthorizedKeys, "Path to authorized_keys")
 	fs.StringVar(&c.SSH.CloneURL, "ssh.clone-url", c.SSH.CloneURL, "SSH clone URL base")
 	fs.IntVar(&c.SSH.Port, "ssh.port", c.SSH.Port, "SSH port")
 	fs.StringVar(&c.SSH.HostKey, "ssh.host-key", c.SSH.HostKey, "SSH host key (created if it doesn't exist)")
+	fs.BoolVar(&c.HTTP.Enable, "http.enable", c.HTTP.Enable, "Enable HTTP server")
 	fs.StringVar(&c.HTTP.CloneURL, "http.clone-url", c.HTTP.CloneURL, "HTTP clone URL base")
 	fs.IntVar(&c.HTTP.Port, "http.port", c.HTTP.Port, "HTTP port")
 	fs.StringVar(&c.Meta.Title, "meta.title", c.Meta.Title, "App title")
@@ -118,6 +126,7 @@ func parseArgs(args []string) (c cliArgs, e error) {
 		})
 		return nil
 	})
+	fs.BoolVar(&c.Tailscale.Enable, "tailscale.enable", c.Tailscale.Enable, "Enable Tailscale")
 	fs.StringVar(&c.Tailscale.Hostname, "tailscale.hostname", c.Tailscale.Hostname, "Tailscale host to show private repos on")
 	fs.StringVar(&c.Tailscale.DataDir, "tailscale.data-dir", c.Tailscale.DataDir, "Tailscale data/state directory")
 

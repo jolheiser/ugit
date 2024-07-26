@@ -76,7 +76,9 @@
       configFile = pkgs.writeText "ugit.yaml" (builtins.readFile (yamlFormat.generate "ugit-yaml" cfg.config));
       authorizedKeysFile = pkgs.writeText "ugit_keys" (builtins.concatStringsSep "\n" cfg.authorizedKeys);
     in {
-      options = with lib; {
+      options = let
+        inherit (lib) mkEnableOption mkOption types;
+      in {
         services.ugit = {
           enable = mkEnableOption "Enable ugit";
 
@@ -84,6 +86,12 @@
             type = types.package;
             description = "ugit package to use";
             default = ugit;
+          };
+
+          tsAuthKey = mkOption {
+            type = types.str;
+            description = "Tailscale one-time auth-key";
+            default = "";
           };
 
           repoDir = mkOption {
@@ -155,7 +163,12 @@
               if (builtins.length cfg.authorizedKeys) > 0
               then authorizedKeysFile
               else cfg.authorizedKeysFile;
-            args = ["--config=${configFile}" "--repo-dir=${cfg.repoDir}" "--ssh.authorized-keys=${authorizedKeysPath}" "--ssh.host-key=${cfg.hostKeyFile}"];
+            args = [
+              "--config=${configFile}"
+              "--repo-dir=${cfg.repoDir}"
+              "--ssh.authorized-keys=${authorizedKeysPath}"
+              "--ssh.host-key=${cfg.hostKeyFile}"
+            ];
           in "${cfg.package}/bin/ugitd ${builtins.concatStringsSep " " args}";
           wantedBy = ["multi-user.target"];
           after = ["network.target"];
@@ -166,6 +179,7 @@
             Restart = "always";
             RestartSec = "15";
             WorkingDirectory = "/var/lib/ugit";
+            Environment = ["TS_AUTHKEY=${cfg.tsAuthKey}"];
           };
         };
       };

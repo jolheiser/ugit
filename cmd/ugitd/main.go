@@ -62,23 +62,25 @@ func main() {
 		panic(err)
 	}
 
-	sshSettings := ssh.Settings{
-		AuthorizedKeys: args.SSH.AuthorizedKeys,
-		CloneURL:       args.SSH.CloneURL,
-		Port:           args.SSH.Port,
-		HostKey:        args.SSH.HostKey,
-		RepoDir:        args.RepoDir,
-	}
-	sshSrv, err := ssh.New(sshSettings)
-	if err != nil {
-		panic(err)
-	}
-	go func() {
-		log.Debugf("SSH listening on ssh://localhost:%d\n", sshSettings.Port)
-		if err := sshSrv.ListenAndServe(); err != nil {
+	if args.SSH.Enable {
+		sshSettings := ssh.Settings{
+			AuthorizedKeys: args.SSH.AuthorizedKeys,
+			CloneURL:       args.SSH.CloneURL,
+			Port:           args.SSH.Port,
+			HostKey:        args.SSH.HostKey,
+			RepoDir:        args.RepoDir,
+		}
+		sshSrv, err := ssh.New(sshSettings)
+		if err != nil {
 			panic(err)
 		}
-	}()
+		go func() {
+			log.Debugf("SSH listening on ssh://localhost:%d\n", sshSettings.Port)
+			if err := sshSrv.ListenAndServe(); err != nil {
+				panic(err)
+			}
+		}()
+	}
 
 	httpSettings := http.Settings{
 		Title:       args.Meta.Title,
@@ -98,15 +100,17 @@ func main() {
 			URL:  link.URL,
 		})
 	}
-	httpSrv := http.New(httpSettings)
-	go func() {
-		log.Debugf("HTTP listening on http://localhost:%d\n", httpSettings.Port)
-		if err := httpSrv.ListenAndServe(); err != nil {
-			panic(err)
-		}
-	}()
+	if args.HTTP.Enable {
+		httpSrv := http.New(httpSettings)
+		go func() {
+			log.Debugf("HTTP listening on http://localhost:%d\n", httpSettings.Port)
+			if err := httpSrv.ListenAndServe(); err != nil {
+				panic(err)
+			}
+		}()
+	}
 
-	if _, ok := os.LookupEnv("TS_AUTHKEY"); ok {
+	if args.Tailscale.Enable {
 		tailnetSettings := httpSettings
 		tailnetSettings.ShowPrivate = true
 		tailnetSrv := http.New(tailnetSettings)
