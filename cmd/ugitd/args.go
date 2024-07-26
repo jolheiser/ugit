@@ -11,12 +11,13 @@ import (
 )
 
 type cliArgs struct {
-	RepoDir string
-	SSH     sshArgs
-	HTTP    httpArgs
-	Meta    metaArgs
-	Profile profileArgs
-	Log     logArgs
+	RepoDir   string
+	SSH       sshArgs
+	HTTP      httpArgs
+	Meta      metaArgs
+	Profile   profileArgs
+	Log       logArgs
+	Tailscale tailscaleArgs
 }
 
 type sshArgs struct {
@@ -52,6 +53,11 @@ type logArgs struct {
 	JSON  bool
 }
 
+type tailscaleArgs struct {
+	Hostname string
+	DataDir  string
+}
+
 func parseArgs(args []string) (c cliArgs, e error) {
 	fs := flag.NewFlagSet("ugitd", flag.ContinueOnError)
 	fs.String("config", "ugit.yaml", "Path to config file")
@@ -74,6 +80,10 @@ func parseArgs(args []string) (c cliArgs, e error) {
 		},
 		Log: logArgs{
 			Level: log.InfoLevel,
+		},
+		Tailscale: tailscaleArgs{
+			Hostname: "ugit",
+			DataDir:  ".tsnet",
 		},
 	}
 
@@ -108,6 +118,8 @@ func parseArgs(args []string) (c cliArgs, e error) {
 		})
 		return nil
 	})
+	fs.StringVar(&c.Tailscale.Hostname, "tailscale.hostname", c.Tailscale.Hostname, "Tailscale host to show private repos on")
+	fs.StringVar(&c.Tailscale.DataDir, "tailscale.data-dir", c.Tailscale.DataDir, "Tailscale data/state directory")
 
 	return c, ff.Parse(fs, args,
 		ff.WithEnvVarPrefix("UGIT"),

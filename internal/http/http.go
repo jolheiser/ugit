@@ -18,12 +18,12 @@ import (
 // Server is the container struct for the HTTP server
 type Server struct {
 	port int
-	mux  *chi.Mux
+	Mux  *chi.Mux
 }
 
 // ListenAndServe simply wraps http.ListenAndServe to contain the functionality here
 func (s Server) ListenAndServe() error {
-	return http.ListenAndServe(fmt.Sprintf("localhost:%d", s.port), s.mux)
+	return http.ListenAndServe(fmt.Sprintf("localhost:%d", s.port), s.Mux)
 }
 
 // Settings is the configuration for the HTTP server
@@ -34,6 +34,7 @@ type Settings struct {
 	Port        int
 	RepoDir     string
 	Profile     Profile
+	ShowPrivate bool
 }
 
 // Profile is the index profile
@@ -101,7 +102,7 @@ func New(settings Settings) Server {
 		r.Get("/tailwind.css", html.TailwindHandler)
 	})
 
-	return Server{mux: mux, port: settings.Port}
+	return Server{Mux: mux, port: settings.Port}
 }
 
 type repoHandler struct {

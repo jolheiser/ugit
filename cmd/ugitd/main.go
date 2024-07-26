@@ -16,6 +16,7 @@ import (
 	"github.com/go-chi/httplog/v2"
 	"github.com/go-git/go-git/v5/plumbing/protocol/packp"
 	"github.com/go-git/go-git/v5/utils/trace"
+	"go.jolheiser.com/tailroute"
 	"go.jolheiser.com/ugit/internal/git"
 	"go.jolheiser.com/ugit/internal/http"
 	"go.jolheiser.com/ugit/internal/ssh"
@@ -89,6 +90,7 @@ func main() {
 			Username: args.Profile.Username,
 			Email:    args.Profile.Email,
 		},
+		ShowPrivate: false,
 	}
 	for _, link := range args.Profile.Links {
 		httpSettings.Profile.Links = append(httpSettings.Profile.Links, http.Link{
@@ -103,6 +105,21 @@ func main() {
 			panic(err)
 		}
 	}()
+
+	if _, ok := os.LookupEnv("TS_AUTHKEY"); ok {
+		tailnetSettings := httpSettings
+		tailnetSettings.ShowPrivate = true
+		tailnetSrv := http.New(tailnetSettings)
+		tr := tailroute.Router{
+			Tailnet: tailnetSrv.Mux,
+		}
+		go func() {
+			log.Debugf("Tailnet listening on http://%s\n", args.Tailscale.Hostname)
+			if err := tr.Serve(args.Tailscale.Hostname, args.Tailscale.DataDir); err != nil {
+				panic(err)
+			}
+		}()
+	}
 
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, os.Kill, os.Interrupt)
