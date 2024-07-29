@@ -58,7 +58,6 @@ func gitService(ctx ReadWriteContexter, command, repoDir string, args ...string)
 	cmd.Env = append(os.Environ(), fmt.Sprintf("UGIT_REPODIR=%s", repoDir), "GIT_PROTOCOL=version=2")
 	cmd.Stdin = ctx
 	cmd.Stdout = ctx
-	fmt.Println(cmd.Env, cmd.String())
 
 	return cmd.Run()
 }

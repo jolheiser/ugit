@@ -149,12 +149,19 @@ func requiredFS(repoDir string) error {
 	}
 	fp = filepath.Join(fp, "pre-receive")
 
+	if err := os.MkdirAll(fp+".d", os.ModePerm); err != nil {
+		return err
+	}
+
 	fi, err := os.Create(fp)
 	if err != nil {
 		return err
 	}
 	fi.WriteString("#!/usr/bin/env bash\n")
 	fi.WriteString(fmt.Sprintf("%s pre-receive-hook\n", bin))
+	fi.WriteString(fmt.Sprintf(`for hook in %s.d/*; do
+	"${hook}"
+done`, fp))
 	fi.Close()
 
 	return os.Chmod(fp, 0o755)
