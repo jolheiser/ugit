@@ -35,7 +35,7 @@
         path = ./.;
       });
       pwd = ./.;
-      subPackages = ["cmd/ugitd"];
+      subPackages = ["cmd/ugitd" "cmd/ugit-uci"];
       CGO_ENABLED = 0;
       flags = [
         "-trimpath"
