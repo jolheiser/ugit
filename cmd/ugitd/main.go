@@ -160,6 +160,7 @@ func requiredFS(repoDir string) error {
 	fi.WriteString("#!/usr/bin/env bash\n")
 	fi.WriteString(fmt.Sprintf("%s pre-receive-hook\n", bin))
 	fi.WriteString(fmt.Sprintf(`for hook in %s.d/*; do
+	test -x "${hook}" && test -f "${hook}" || continue
 	"${hook}"
 done`, fp))
 	fi.Close()
