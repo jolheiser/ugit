@@ -2,6 +2,7 @@ package markup
 
 import (
 	"io"
+	"path/filepath"
 
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/formatters/html"
@@ -26,10 +27,17 @@ var (
 
 type code struct{}
 
+var customReg = map[string]string{
+	".hujson": "json",
+}
+
 func setup(source []byte, fileName string) (chroma.Iterator, *chroma.Style, error) {
 	lexer := lexers.Match(fileName)
 	if lexer == nil {
 		lexer = lexers.Fallback
+		if name, ok := customReg[filepath.Ext(fileName)]; ok {
+			lexer = lexers.Get(name)
+		}
 	}
 	lexer = chroma.Coalesce(lexer)
 
