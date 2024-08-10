@@ -206,7 +206,6 @@ func (rh repoHandler) repoSearch(w http.ResponseWriter, r *http.Request) error {
 			}
 			results[idx].Content = buf.String()
 		}
-
 	}
 
 	if err := html.RepoSearch(html.SearchContext{

@@ -21,20 +21,18 @@ type SearchContext struct {
 
 func (s SearchContext) DedupeResults() [][]git.GrepResult {
 	var (
-		results        [][]git.GrepResult
-		currentFile    string
-		currentResults []git.GrepResult
+		results     [][]git.GrepResult
+		currentFile string
 	)
+	var idx int
 	for _, result := range s.Results {
 		if result.File == currentFile {
-			currentResults = append(currentResults, result)
+			results[idx] = append(results[idx], result)
 			continue
 		}
-		if currentFile != "" {
-			results = append(results, currentResults)
-		}
+		results = append(results, []git.GrepResult{result})
 		currentFile = result.File
-		currentResults = []git.GrepResult{result}
+		idx++
 	}
 
 	return results
@@ -128,7 +126,7 @@ func repoSearchResult(repo, ref string, results []git.GrepResult) templ.Componen
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(results[0].File)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_search.templ`, Line: 50, Col: 230}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_search.templ`, Line: 48, Col: 230}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -154,7 +152,7 @@ func repoSearchResult(repo, ref string, results []git.GrepResult) templ.Componen
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d ", len(results[1:])))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_search.templ`, Line: 56, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_search.templ`, Line: 54, Col: 50}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -181,7 +179,7 @@ func repoSearchResult(repo, ref string, results []git.GrepResult) templ.Componen
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(results[0].File)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_search.templ`, Line: 58, Col: 230}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `repo_search.templ`, Line: 56, Col: 230}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {

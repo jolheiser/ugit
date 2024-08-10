@@ -11,20 +11,18 @@ type SearchContext struct {
 
 func (s SearchContext) DedupeResults() [][]git.GrepResult {
 	var (
-		results        [][]git.GrepResult
-		currentFile    string
-		currentResults []git.GrepResult
+		results     [][]git.GrepResult
+		currentFile string
 	)
+	var idx int
 	for _, result := range s.Results {
 		if result.File == currentFile {
-			currentResults = append(currentResults, result)
+			results[idx] = append(results[idx], result)
 			continue
 		}
-		if currentFile != "" {
-			results = append(results, currentResults)
-		}
+		results = append(results, []git.GrepResult{result})
 		currentFile = result.File
-		currentResults = []git.GrepResult{result}
+		idx++
 	}
 
 	return results
