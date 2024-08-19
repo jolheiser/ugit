@@ -17,7 +17,7 @@ func (s SearchContext) DedupeResults() [][]git.GrepResult {
 	var idx int
 	for _, result := range s.Results {
 		if result.File == currentFile {
-			results[idx] = append(results[idx], result)
+			results[idx-1] = append(results[idx-1], result)
 			continue
 		}
 		results = append(results, []git.GrepResult{result})
