@@ -98,7 +98,7 @@ func (r Repo) Dir(ref, path string) ([]FileInfo, error) {
 		}
 	}
 
-	fis := make([]FileInfo, 0)
+	fis := make([]FileInfo, 0, len(t.Entries))
 	for _, entry := range t.Entries {
 		fm, err := entry.Mode.ToOSFileMode()
 		if err != nil {
@@ -118,7 +118,10 @@ func (r Repo) Dir(ref, path string) ([]FileInfo, error) {
 	sort.Slice(fis, func(i, j int) bool {
 		fi1 := fis[i]
 		fi2 := fis[j]
-		return (fi1.IsDir && !fi2.IsDir) || fi1.Name() < fi2.Name()
+		if fi1.IsDir != fi2.IsDir {
+			return fi1.IsDir
+		}
+		return fi1.Name() < fi2.Name()
 	})
 
 	return fis, nil
