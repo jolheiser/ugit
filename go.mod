@@ -3,7 +3,7 @@ module go.jolheiser.com/ugit
 go 1.22.3
 
 require (
-	github.com/a-h/templ v0.2.543
+	github.com/a-h/templ v0.2.778
 	github.com/alecthomas/chroma/v2 v2.12.0
 	github.com/charmbracelet/log v0.3.1
 	github.com/charmbracelet/ssh v0.0.0-20240201134204-3f297de25560
@@ -18,7 +18,7 @@ require (
 	github.com/yuin/goldmark-emoji v1.0.2
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	go.jolheiser.com/tailroute v0.0.0-20240726150858-67ef456b46b5
-	golang.org/x/net v0.23.0
+	golang.org/x/net v0.28.0
 )
 
 require (
@@ -122,15 +122,15 @@ require (
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	go4.org/mem v0.0.0-20220726221520-4f986261bf13 // indirect
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba // indirect
-	golang.org/x/crypto v0.21.0 // indirect
+	golang.org/x/crypto v0.26.0 // indirect
 	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a // indirect
-	golang.org/x/mod v0.16.0 // indirect
-	golang.org/x/sync v0.6.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/term v0.18.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/mod v0.20.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
+	golang.org/x/sys v0.23.0 // indirect
+	golang.org/x/term v0.23.0 // indirect
+	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
-	golang.org/x/tools v0.19.0 // indirect
+	golang.org/x/tools v0.24.0 // indirect
 	golang.zx2c4.com/wintun v0.0.0-20230126152724-0fa3db229ce2 // indirect
 	golang.zx2c4.com/wireguard/windows v0.5.3 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
