@@ -4,7 +4,7 @@ go 1.22.3
 
 require (
 	github.com/a-h/templ v0.2.778
-	github.com/alecthomas/chroma/v2 v2.12.0
+	github.com/alecthomas/chroma/v2 v2.14.1-0.20241015182914-2e669a272c1d
 	github.com/charmbracelet/log v0.3.1
 	github.com/charmbracelet/ssh v0.0.0-20240201134204-3f297de25560
 	github.com/charmbracelet/wish v1.3.0
@@ -57,7 +57,7 @@ require (
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/dblohm7/wingoes v0.0.0-20240119213807-a09d6be7affa // indirect
 	github.com/digitalocean/go-smbios v0.0.0-20180907143718-390a4f403a8e // indirect
-	github.com/dlclark/regexp2 v1.10.0 // indirect
+	github.com/dlclark/regexp2 v1.11.4 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fxamacker/cbor/v2 v2.5.0 // indirect
 	github.com/gaissmai/bart v0.4.1 // indirect
