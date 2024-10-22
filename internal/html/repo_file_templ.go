@@ -69,7 +69,7 @@ func RepoFile(rfc RepoFileContext) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <a class=\"text-text underline decoration-text/50 decoration-dashed hover:decoration-solid\" href=\"?raw\">raw</a><div class=\"code\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <a class=\"text-text underline decoration-text/50 decoration-dashed hover:decoration-solid\" href=\"?raw\">raw</a><div class=\"code relative\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -77,7 +77,7 @@ func RepoFile(rfc RepoFileContext) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button id=\"copy\" class=\"absolute top-0 right-0 rounded bg-base hover:bg-surface0\"></button></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -87,7 +87,7 @@ func RepoFile(rfc RepoFileContext) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\t\tconst lineRe = /#L(\\d+)(?:-L(\\d+))?/g\n\t\tconst $lineLines = document.querySelectorAll(\".chroma .lntable .lnt\");\n\t\tconst $codeLines = document.querySelectorAll(\".chroma .lntable .line\");\n\t\tlet start = 0;\n\t\tlet end = 0;\n\n\t\tconst results = [...location.hash.matchAll(lineRe)];\t\t\n\t\tif (0 in results) {\n\t\t\tstart = results[0][1] !== undefined ? parseInt(results[0][1]) : 0;\n\t\t\tend = results[0][2] !== undefined ? parseInt(results[0][2]) : 0;\n\t\t}\n\t\tif (start != 0) {\n\t\t\tdeactivateLines();\n\t\t\tactivateLines(start, end);\n\t\t}\n\n\t\tfor (let line of $lineLines) {\n\t\t\tline.addEventListener(\"click\", (event) => {\n\t\t\t\tevent.preventDefault();\n\t\t\t\tdeactivateLines();\n\t\t\t\tconst n = parseInt(line.id.substring(1));\n\t\t\t\tlet anchor = \"\";\n\t\t\t\tif (event.shiftKey) {\n\t\t\t\t\tend = n;\n\t\t\t\t\tanchor = `#L${start}-L${end}`;\n\t\t\t\t} else {\n\t\t\t\t\tstart = n;\n\t\t\t\t\tend = 0;\n\t\t\t\t\tanchor = `#L${start}`;\n\t\t\t\t}\n\t\t\t\thistory.replaceState(null, null, anchor);\n\t\t\t\tactivateLines(start, end);\n\t\t\t});\n\t\t}\n\n\t\tfunction activateLines(start, end) {\n\t\t\tif (end < start) end = start;\n\t\t\tfor (let idx = start - 1; idx < end; idx++) {\n\t\t\t\t$codeLines[idx].classList.add(\"active\");\n\t\t\t}\n\t\t}\n\n\t\tfunction deactivateLines() {\n\t\t\tfor (let code of $codeLines) {\n\t\t\t\tcode.classList.remove(\"active\");\n\t\t\t}\n\t\t}\n\n\t\t\n\t\t\n\t</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\t\tconst lineRe = /#L(\\d+)(?:-L(\\d+))?/g\n\t\tconst $lineLines = document.querySelectorAll(\".chroma .lntable .lnt\");\n\t\tconst $codeLines = document.querySelectorAll(\".chroma .lntable .line\");\n\t\tconst $copyButton = document.getElementById('copy');\n\t\tconst $copyIcon = \"📋\";\n\t\tconst $copiedIcon = \"✅\";\n\t\tlet $code = \"\"\n\t\tfor (let codeLine of $codeLines) $code += codeLine.innerText;\n\t\tlet start = 0;\n\t\tlet end = 0;\n\n\t\tconst results = [...location.hash.matchAll(lineRe)];\t\t\n\t\tif (0 in results) {\n\t\t\tstart = results[0][1] !== undefined ? parseInt(results[0][1]) : 0;\n\t\t\tend = results[0][2] !== undefined ? parseInt(results[0][2]) : 0;\n\t\t}\n\t\tif (start != 0) {\n\t\t\tdeactivateLines();\n\t\t\tactivateLines(start, end);\n\t\t\t$lineLines[start-1].scrollIntoView(true);\n\t\t}\n\n\t\tfor (let line of $lineLines) {\n\t\t\tline.addEventListener(\"click\", (event) => {\n\t\t\t\tevent.preventDefault();\n\t\t\t\tdeactivateLines();\n\t\t\t\tconst n = parseInt(line.id.substring(1));\n\t\t\t\tlet anchor = \"\";\n\t\t\t\tif (event.shiftKey) {\n\t\t\t\t\tend = n;\n\t\t\t\t\tanchor = `#L${start}-L${end}`;\n\t\t\t\t} else {\n\t\t\t\t\tstart = n;\n\t\t\t\t\tend = 0;\n\t\t\t\t\tanchor = `#L${start}`;\n\t\t\t\t}\n\t\t\t\thistory.replaceState(null, null, anchor);\n\t\t\t\tactivateLines(start, end);\n\t\t\t});\n\t\t}\n\n\t\tif (navigator.clipboard && navigator.clipboard.writeText) {\n\t\t\t$copyButton.innerText = $copyIcon;\n\t\t\t$copyButton.classList.remove(\"hidden\");\n    }\n\t\t$copyButton.addEventListener(\"click\", () => {\n      navigator.clipboard.writeText($code);\n\t\t\t$copyButton.innerText = $copiedIcon;\n\t\t\tsetTimeout(() => {\n\t\t\t\t$copyButton.innerText = $copyIcon;\n\t\t\t}, 1000);\n    });\n\n\t\tfunction activateLines(start, end) {\n\t\t\tif (end < start) end = start;\n\t\t\tfor (let idx = start - 1; idx < end; idx++) {\n\t\t\t\t$codeLines[idx].classList.add(\"active\");\n\t\t\t}\n\t\t}\n\n\t\tfunction deactivateLines() {\n\t\t\tfor (let code of $codeLines) {\n\t\t\t\tcode.classList.remove(\"active\");\n\t\t\t}\n\t\t}\n\n\t\t\n\t\t\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
