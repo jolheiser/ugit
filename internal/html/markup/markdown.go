@@ -112,6 +112,7 @@ func (a astTransformer) Transform(node *ast.Document, _ text.Reader, pc parser.C
 		case *ast.Image:
 			link := v.Destination
 			if len(link) > 0 && !bytes.HasPrefix(link, []byte("http")) {
+				v.SetAttributeString("style", []byte("max-width:100%;"))
 				v.Destination = []byte(resolveLink(ctx.repo, ctx.ref, ctx.path, string(link)) + "?raw&pretty")
 			}
 
