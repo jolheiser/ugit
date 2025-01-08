@@ -18,7 +18,7 @@ pkgs.buildGoModule {
     "cmd/ugit-uci"
   ];
   vendorHash = pkgs.lib.fileContents ../go.mod.sri;
-  CGO_ENABLED = 0;
+  env.CGO_ENABLED = 0;
   flags = [ "-trimpath" ];
   ldflags = [
     "-s"
