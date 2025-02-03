@@ -61,7 +61,7 @@ func (rh repoHandler) index(w http.ResponseWriter, r *http.Request) error {
 		})
 	}
 
-	if err := html.Index(html.IndexContext{
+	if err := html.IndexTemplate(html.IndexContext{
 		BaseContext: rh.baseContext(),
 		Profile: html.IndexProfile{
 			Username: rh.s.Profile.Username,
@@ -69,7 +69,7 @@ func (rh repoHandler) index(w http.ResponseWriter, r *http.Request) error {
 			Links:    links,
 		},
 		Repos: repos,
-	}).Render(r.Context(), w); err != nil {
+	}).Render(w); err != nil {
 		return httperr.Error(err)
 	}
 

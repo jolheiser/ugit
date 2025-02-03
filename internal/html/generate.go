@@ -25,7 +25,6 @@ var (
 	otherCSS string
 )
 
-//go:generate templ generate
 //go:generate go run generate.go
 func main() {
 	if err := tailwind(); err != nil {
@@ -33,7 +32,7 @@ func main() {
 	}
 }
 
-// Generate tailwind code from templ templates and combine with other misc CSS
+// Generate tailwind code from templates and combine with other misc CSS
 func tailwind() error {
 	fmt.Println("generating tailwind...")
 

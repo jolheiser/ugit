@@ -2,8 +2,11 @@ package html
 
 import (
 	"fmt"
-	"strings"
 	"path"
+	"strings"
+
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
 )
 
 type RepoBreadcrumbComponentContext struct {
@@ -36,17 +39,19 @@ func (r RepoBreadcrumbComponentContext) crumbs() []breadcrumb {
 	return breadcrumbs
 }
 
-templ repoBreadcrumbComponent(rbcc RepoBreadcrumbComponentContext) {
-	if rbcc.Path != "" {
-		<div class="inline-block text-text">
-			for _, crumb := range rbcc.crumbs() {
-				if crumb.end {
-					<span>{ crumb.label }</span>
-				} else {
-					<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(crumb.href) }>{ crumb.label }</a>
-					{ " / " }
-				}
-			}
-		</div>
+func repoBreadcrumbComponent(rbcc RepoBreadcrumbComponentContext) Node {
+	if rbcc.Path == "" {
+		return nil
 	}
+	return Div(Class("inline-block text-text"),
+		Map(rbcc.crumbs(), func(crumb breadcrumb) Node {
+			if crumb.end {
+				return Span(Text(crumb.label))
+			}
+			return Group([]Node{
+				A(Class("underline decoration-text/50 decoration-dashed hover:decoration-solid"), Href(crumb.href), Text(crumb.label)),
+				Text(" / "),
+			})
+		}),
+	)
 }

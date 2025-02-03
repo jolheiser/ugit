@@ -5,7 +5,6 @@ go 1.23.1
 toolchain go1.23.3
 
 require (
-	github.com/a-h/templ v0.3.819
 	github.com/alecthomas/chroma/v2 v2.15.0
 	github.com/charmbracelet/log v0.4.0
 	github.com/charmbracelet/ssh v0.0.0-20241211182756-4fe22b0f1b7c
@@ -21,6 +20,7 @@ require (
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	go.jolheiser.com/tailroute v0.0.0-20240726162540-125f37adab56
 	golang.org/x/net v0.34.0
+	maragu.dev/gomponents v1.0.0
 )
 
 require (

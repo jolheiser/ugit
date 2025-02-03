@@ -45,7 +45,6 @@
             nativeBuildInputs = with pkgs; [
               go
               gopls
-              templ
               tctp.${system}
               tctpl.${system}
               vscode-langservers-extracted

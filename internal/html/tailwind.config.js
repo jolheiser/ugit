@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./**/*.templ"],
+  content: ["./*.go"],
   plugins: [require("@catppuccin/tailwindcss")],
 }
 
