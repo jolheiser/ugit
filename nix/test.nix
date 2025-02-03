@@ -17,10 +17,6 @@
           echo "Pre-receive hook executed"
         '';
       }
-      {
-        name = "ugit-uci";
-        content = "${config.services.ugit.package}/bin/ugit-uci";
-      }
     ];
   };
 }

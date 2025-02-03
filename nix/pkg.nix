@@ -15,7 +15,6 @@ pkgs.buildGoModule {
   );
   subPackages = [
     "cmd/ugitd"
-    "cmd/ugit-uci"
   ];
   vendorHash = pkgs.lib.fileContents ../go.mod.sri;
   env.CGO_ENABLED = 0;
