@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log/slog"
 	"strings"
 
-	"github.com/charmbracelet/log"
 	"github.com/peterbourgon/ff/v3"
 	"github.com/peterbourgon/ff/v3/ffyaml"
 )
@@ -51,7 +51,7 @@ type profileLink struct {
 }
 
 type logArgs struct {
-	Level log.Level
+	Level slog.Level
 	JSON  bool
 }
 
@@ -78,14 +78,23 @@ func parseArgs(args []string) (c cliArgs, e error) {
 			Description: "Minimal git server",
 		},
 		Log: logArgs{
-			Level: log.InfoLevel,
+			Level: slog.LevelError,
 		},
 	}
 
 	fs.Func("log.level", "Logging level", func(s string) error {
-		lvl, err := log.ParseLevel(s)
-		if err != nil {
-			return err
+		var lvl slog.Level
+		switch strings.ToLower(s) {
+		case "debug":
+			lvl = slog.LevelDebug
+		case "info":
+			lvl = slog.LevelInfo
+		case "warn", "warning":
+			lvl = slog.LevelWarn
+		case "error":
+			lvl = slog.LevelError
+		default:
+			return fmt.Errorf("unknown log level %q: options are [debug, info, warn, error]", s)
 		}
 		c.Log.Level = lvl
 		return nil

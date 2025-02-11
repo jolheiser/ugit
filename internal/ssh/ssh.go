@@ -2,8 +2,8 @@ package ssh
 
 import (
 	"fmt"
+	"log"
 
-	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	"github.com/charmbracelet/wish/logging"
@@ -42,7 +42,7 @@ func (a hooks) Push(_ string, _ ssh.PublicKey)  {}
 func (a hooks) Fetch(_ string, _ ssh.PublicKey) {}
 
 var (
-	DefaultLogger logging.Logger = log.StandardLog()
+	DefaultLogger logging.Logger = log.Default()
 	NoopLogger    logging.Logger = noopLogger{}
 )
 

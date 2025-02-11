@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -11,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/charmbracelet/log"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog/v2"
 	"github.com/go-git/go-git/v5/plumbing/protocol/packp"
@@ -39,14 +39,14 @@ func main() {
 		panic(err)
 	}
 
-	log.SetLevel(args.Log.Level)
+	slog.SetLogLoggerLevel(args.Log.Level)
 	middleware.DefaultLogger = httplog.RequestLogger(httplog.NewLogger("ugit", httplog.Options{
 		JSON:     args.Log.JSON,
 		LogLevel: slog.Level(args.Log.Level),
-		Concise:  args.Log.Level != log.DebugLevel,
+		Concise:  args.Log.Level != slog.LevelDebug,
 	}))
 
-	if args.Log.Level == log.DebugLevel {
+	if args.Log.Level == slog.LevelDebug {
 		trace.SetTarget(trace.Packet)
 	} else {
 		middleware.DefaultLogger = http.NoopLogger
@@ -54,7 +54,8 @@ func main() {
 	}
 
 	if args.Log.JSON {
-		log.SetFormatter(log.JSONFormatter)
+		logger := slog.New(slog.NewJSONHandler(os.Stderr, nil))
+		slog.SetDefault(logger)
 	}
 
 	if err := requiredFS(args.RepoDir); err != nil {
@@ -74,7 +75,7 @@ func main() {
 			panic(err)
 		}
 		go func() {
-			log.Debugf("SSH listening on ssh://localhost:%d\n", sshSettings.Port)
+			log.Printf("SSH listening on ssh://localhost:%d\n", sshSettings.Port)
 			if err := sshSrv.ListenAndServe(); err != nil {
 				panic(err)
 			}
@@ -102,7 +103,7 @@ func main() {
 	if args.HTTP.Enable {
 		httpSrv := http.New(httpSettings)
 		go func() {
-			log.Debugf("HTTP listening on http://localhost:%d\n", httpSettings.Port)
+			log.Printf("HTTP listening on http://localhost:%d\n", httpSettings.Port)
 			if err := httpSrv.ListenAndServe(); err != nil {
 				panic(err)
 			}

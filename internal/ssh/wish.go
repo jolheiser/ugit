@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,7 +13,6 @@ import (
 
 	"go.jolheiser.com/ugit/internal/git"
 
-	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 )
@@ -91,7 +91,7 @@ func Middleware(repoDir string, cloneURL string, port int, gh Hooks) wish.Middle
 						if errors.Is(err, ErrInvalidRepo) {
 							Fatal(s, ErrInvalidRepo)
 						}
-						log.Error("unknown git error", "error", err)
+						slog.Error("unknown git error", "error", err)
 						Fatal(s, ErrSystemMalfunction)
 					}
 					gh.Fetch(repo, pk)
@@ -103,7 +103,7 @@ func Middleware(repoDir string, cloneURL string, port int, gh Hooks) wish.Middle
 			if len(cmd) == 0 {
 				des, err := os.ReadDir(repoDir)
 				if err != nil && err != fs.ErrNotExist {
-					log.Error("invalid repository", "error", err)
+					slog.Error("invalid repository", "error", err)
 				}
 				tw := tabwriter.NewWriter(s, 0, 0, 1, ' ', 0)
 				for _, de := range des {

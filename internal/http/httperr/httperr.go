@@ -2,9 +2,8 @@ package httperr
 
 import (
 	"errors"
+	"log/slog"
 	"net/http"
-
-	"github.com/charmbracelet/log"
 )
 
 type httpError struct {
@@ -41,7 +40,7 @@ func Handler(fn func(w http.ResponseWriter, r *http.Request) error) http.Handler
 				status = httpErr.status
 			}
 
-			log.Error(err)
+			slog.Error("httperr Handler error", "error", err)
 			http.Error(w, http.StatusText(status), status)
 		}
 	}
