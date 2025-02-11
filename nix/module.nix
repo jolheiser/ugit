@@ -28,12 +28,6 @@ in
           default = pkg;
         };
 
-        tsAuthKey = mkOption {
-          type = types.str;
-          description = "Tailscale one-time auth-key";
-          default = "";
-        };
-
         repoDir = mkOption {
           type = types.str;
           description = "where ugit stores repositories";
@@ -146,7 +140,6 @@ in
           Restart = "always";
           RestartSec = "15";
           WorkingDirectory = "/var/lib/ugit";
-          Environment = [ "TS_AUTHKEY=${cfg.tsAuthKey}" ];
         };
       };
       ugit-hooks = {

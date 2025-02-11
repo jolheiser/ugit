@@ -16,7 +16,6 @@ import (
 	"github.com/go-chi/httplog/v2"
 	"github.com/go-git/go-git/v5/plumbing/protocol/packp"
 	"github.com/go-git/go-git/v5/utils/trace"
-	"go.jolheiser.com/tailroute"
 	"go.jolheiser.com/ugit/internal/git"
 	"go.jolheiser.com/ugit/internal/http"
 	"go.jolheiser.com/ugit/internal/ssh"
@@ -92,7 +91,7 @@ func main() {
 			Username: args.Profile.Username,
 			Email:    args.Profile.Email,
 		},
-		ShowPrivate: false,
+		ShowPrivate: args.ShowPrivate,
 	}
 	for _, link := range args.Profile.Links {
 		httpSettings.Profile.Links = append(httpSettings.Profile.Links, http.Link{
@@ -105,21 +104,6 @@ func main() {
 		go func() {
 			log.Debugf("HTTP listening on http://localhost:%d\n", httpSettings.Port)
 			if err := httpSrv.ListenAndServe(); err != nil {
-				panic(err)
-			}
-		}()
-	}
-
-	if args.Tailscale.Enable {
-		tailnetSettings := httpSettings
-		tailnetSettings.ShowPrivate = true
-		tailnetSrv := http.New(tailnetSettings)
-		tr := tailroute.Router{
-			Tailnet: tailnetSrv.Mux,
-		}
-		go func() {
-			log.Debugf("Tailnet listening on http://%s\n", args.Tailscale.Hostname)
-			if err := tr.Serve(args.Tailscale.Hostname, args.Tailscale.DataDir); err != nil {
 				panic(err)
 			}
 		}()
