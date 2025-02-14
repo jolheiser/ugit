@@ -8,18 +8,13 @@ let
   cfg = config.services.ugit;
   pkg = pkgs.callPackage ./pkg.nix { inherit pkgs; };
   yamlFormat = pkgs.formats.yaml { };
-  configFile = pkgs.writeText "ugit.yaml" (
-    builtins.readFile (yamlFormat.generate "ugit-yaml" cfg.config)
-  );
-  authorizedKeysFile = pkgs.writeText "ugit_keys" (builtins.concatStringsSep "\n" cfg.authorizedKeys);
-in
-{
-  options =
+  instanceOptions =
+    { name, config, ... }:
     let
       inherit (lib) mkEnableOption mkOption types;
     in
     {
-      services.ugit = {
+      options = {
         enable = mkEnableOption "Enable ugit";
 
         package = mkOption {
@@ -28,10 +23,16 @@ in
           default = pkg;
         };
 
+        homeDir = mkOption {
+          type = types.str;
+          description = "ugit home directory";
+          default = "/var/lib/${name}";
+        };
+
         repoDir = mkOption {
           type = types.str;
           description = "where ugit stores repositories";
-          default = "/var/lib/ugit/repos";
+          default = "/var/lib/${name}/repos";
         };
 
         authorizedKeys = mkOption {
@@ -43,13 +44,13 @@ in
         authorizedKeysFile = mkOption {
           type = types.str;
           description = "path to authorized_keys file ugit uses for auth";
-          default = "/var/lib/ugit/authorized_keys";
+          default = "/var/lib/${name}/authorized_keys";
         };
 
         hostKeyFile = mkOption {
           type = types.str;
           description = "path to host key file (will be created if it doesn't exist)";
-          default = "/var/lib/ugit/ugit_ed25519";
+          default = "/var/lib/${name}/ugit_ed25519";
         };
 
         config = mkOption {
@@ -60,19 +61,14 @@ in
 
         user = mkOption {
           type = types.str;
-          default = "ugit";
+          default = "ugit-${name}";
           description = "User account under which ugit runs";
         };
 
         group = mkOption {
           type = types.str;
-          default = "ugit";
+          default = "ugit-${name}";
           description = "Group account under which ugit runs";
-        };
-
-        openFirewall = mkOption {
-          type = types.bool;
-          default = false;
         };
 
         hooks = mkOption {
@@ -95,95 +91,133 @@ in
         };
       };
     };
-  config = lib.mkIf cfg.enable {
-    users.users."${cfg.user}" = {
-      home = "/var/lib/ugit";
-      createHome = true;
-      group = "${cfg.group}";
-      isSystemUser = true;
-      isNormalUser = false;
-      description = "user for ugit service";
+in
+{
+  options = {
+    services.ugit = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.submodule instanceOptions);
+      default = { };
+      description = "Attribute set of ugit instances";
     };
-    users.groups."${cfg.group}" = { };
-    networking.firewall = lib.mkIf cfg.openFirewall {
-      allowedTCPPorts = [
-        8448
-        8449
-      ];
-    };
+  };
+  config = lib.mkIf (cfg != { }) {
+    users.users = lib.mapAttrs' (
+      name: instanceCfg:
+      lib.nameValuePair instanceCfg.user {
+        home = instanceCfg.homeDir;
+        createHome = true;
+        group = instanceCfg.group;
+        isSystemUser = true;
+        isNormalUser = false;
+        description = "user for ugit ${name} service";
+      }
+    ) (lib.filterAttrs (name: instanceCfg: instanceCfg.enable) cfg);
 
-    systemd.services = {
-      ugit = {
-        enable = true;
-        script =
-          let
-            authorizedKeysPath =
-              if (builtins.length cfg.authorizedKeys) > 0 then authorizedKeysFile else cfg.authorizedKeysFile;
-            args = [
-              "--config=${configFile}"
-              "--repo-dir=${cfg.repoDir}"
-              "--ssh.authorized-keys=${authorizedKeysPath}"
-              "--ssh.host-key=${cfg.hostKeyFile}"
+    users.groups = lib.mapAttrs' (name: instanceCfg: lib.nameValuePair instanceCfg.group { }) (
+      lib.filterAttrs (name: instanceCfg: instanceCfg.enable) cfg
+    );
+
+    systemd.services = lib.foldl' (
+      acc: name:
+      let
+        instanceCfg = cfg.${name};
+      in
+      lib.recursiveUpdate acc (
+        lib.optionalAttrs instanceCfg.enable {
+          "ugit-${name}" = {
+            enable = true;
+            description = "ugit instance ${name}";
+            wantedBy = [ "multi-user.target" ];
+            after = [ "network.target" ];
+            path = [
+              instanceCfg.package
+              pkgs.git
+              pkgs.bash
             ];
-          in
-          "${cfg.package}/bin/ugitd ${builtins.concatStringsSep " " args}";
-        wantedBy = [ "multi-user.target" ];
-        after = [ "network.target" ];
-        path = [
-          cfg.package
-          pkgs.git
-          pkgs.bash
-        ];
-        serviceConfig = {
-          User = cfg.user;
-          Group = cfg.group;
-          Restart = "always";
-          RestartSec = "15";
-          WorkingDirectory = "/var/lib/ugit";
-        };
-      };
-      ugit-hooks = {
-        wantedBy = [ "multi-user.target" ];
-        after = [ "ugit.service" ];
-        requires = [ "ugit.service" ];
-        serviceConfig = {
-          Type = "oneshot";
-          ExecStart =
-            let
-              script = pkgs.writeShellScript "ugit-hooks-link" (
-                builtins.concatStringsSep "\n" (
-                  map (
+            serviceConfig = {
+              User = instanceCfg.user;
+              Group = instanceCfg.group;
+              Restart = "always";
+              RestartSec = "15";
+              WorkingDirectory = instanceCfg.homeDir;
+              ExecStart =
+                let
+                  configFile = pkgs.writeText "ugit-${name}.yaml" (
+                    builtins.readFile (yamlFormat.generate "ugit-${name}-yaml" instanceCfg.config)
+                  );
+                  authorizedKeysFile = pkgs.writeText "ugit_${name}_keys" (
+                    builtins.concatStringsSep "\n" instanceCfg.authorizedKeys
+                  );
+
+                  authorizedKeysPath =
+                    if (builtins.length instanceCfg.authorizedKeys) > 0 then
+                      authorizedKeysFile
+                    else
+                      instanceCfg.authorizedKeysFile;
+                  args = [
+                    "--config=${configFile}"
+                    "--repo-dir=${instanceCfg.repoDir}"
+                    "--ssh.authorized-keys=${authorizedKeysPath}"
+                    "--ssh.host-key=${instanceCfg.hostKeyFile}"
+                  ];
+                in
+                "${instanceCfg.package}/bin/ugitd ${builtins.concatStringsSep " " args}";
+            };
+          };
+
+          "ugit-${name}-hooks" = {
+            description = "Setup hooks for ugit instance ${name}";
+            wantedBy = [ "multi-user.target" ];
+            after = [ "ugit-${name}.service" ];
+            requires = [ "ugit-${name}.service" ];
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+              User = instanceCfg.user;
+              Group = instanceCfg.group;
+              ExecStart =
+                let
+                  hookDir = "${instanceCfg.repoDir}/hooks/pre-receive.d";
+                  mkHookScript =
                     hook:
                     let
-                      script = pkgs.writeShellScript hook.name hook.content;
-                      path = "${cfg.repoDir}/hooks/pre-receive.d/${hook.name}";
+                      script = pkgs.writeShellScript "ugit-${name}-${hook.name}" hook.content;
                     in
-                    "ln -s ${script} ${path}"
-                  ) cfg.hooks
-                )
-              );
-            in
-            "${script}";
-        };
-      };
-    };
-
-    systemd.tmpfiles.settings.ugit = builtins.listToAttrs (
-      map (
-        hook:
-        let
-          script = pkgs.writeShellScript hook.name hook.content;
-          path = "${cfg.repoDir}/hooks/pre-receive.d/${hook.name}";
-        in
-        {
-          name = path;
-          value = {
-            "L" = {
-              argument = "${script}";
+                    ''
+                      mkdir -p ${hookDir}
+                      ln -sf ${script} ${hookDir}/${hook.name}
+                    '';
+                in
+                pkgs.writeShellScript "ugit-${name}-hooks-setup" ''
+                  ${builtins.concatStringsSep "\n" (map mkHookScript instanceCfg.hooks)}
+                '';
             };
           };
         }
-      ) cfg.hooks
-    );
+      )
+    ) { } (builtins.attrNames cfg);
+
+    systemd.tmpfiles.settings = lib.mapAttrs' (
+      name: instanceCfg:
+      lib.nameValuePair "ugit-${name}" (
+        builtins.listToAttrs (
+          map (
+            hook:
+            let
+              script = pkgs.writeShellScript hook.name hook.content;
+              path = "${instanceCfg.repoDir}/hooks/pre-receive.d/${hook.name}";
+            in
+            {
+              name = path;
+              value = {
+                "L" = {
+                  argument = "${script}";
+                };
+              };
+            }
+          ) instanceCfg.hooks
+        )
+      )
+    ) (lib.filterAttrs (name: instanceCfg: instanceCfg.enable) cfg);
   };
 }

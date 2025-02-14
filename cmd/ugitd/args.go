@@ -101,6 +101,7 @@ func parseArgs(args []string) (c cliArgs, e error) {
 	})
 	fs.BoolVar(&c.Log.JSON, "log.json", c.Log.JSON, "Print logs in JSON(L) format")
 	fs.StringVar(&c.RepoDir, "repo-dir", c.RepoDir, "Path to directory containing repositories")
+	fs.BoolVar(&c.ShowPrivate, "show-private", c.ShowPrivate, "Show private repos in web interface")
 	fs.BoolVar(&c.SSH.Enable, "ssh.enable", c.SSH.Enable, "Enable SSH server")
 	fs.StringVar(&c.SSH.AuthorizedKeys, "ssh.authorized-keys", c.SSH.AuthorizedKeys, "Path to authorized_keys")
 	fs.StringVar(&c.SSH.CloneURL, "ssh.clone-url", c.SSH.CloneURL, "SSH clone URL base")
