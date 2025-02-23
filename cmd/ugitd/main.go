@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"syscall"
 
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog/v2"
@@ -111,7 +112,7 @@ func main() {
 	}
 
 	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, os.Kill, os.Interrupt)
+	signal.Notify(ch, syscall.SIGTERM, os.Interrupt)
 	<-ch
 }
 
