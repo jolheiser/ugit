@@ -3,6 +3,7 @@ package git
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -46,6 +47,16 @@ func (r Repo) SaveMeta() error {
 	return json.NewEncoder(fi).Encode(r.Meta)
 }
 
+var defaultMeta = func() []byte {
+	b, err := json.Marshal(RepoMeta{
+		Private: true,
+	})
+	if err != nil {
+		panic(fmt.Sprintf("could not init default meta: %v", err))
+	}
+	return b
+}()
+
 func ensureJSONFile(path string) error {
 	_, err := os.Stat(path)
 	if err == nil {
@@ -59,7 +70,7 @@ func ensureJSONFile(path string) error {
 		return err
 	}
 	defer fi.Close()
-	if _, err := fi.WriteString(`{"private":true}`); err != nil {
+	if _, err := fi.Write(defaultMeta); err != nil {
 		return err
 	}
 	return nil
