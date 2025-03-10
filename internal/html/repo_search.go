@@ -73,6 +73,6 @@ func RepoSearchTemplate(sc SearchContext) Node {
 		If(len(dedupeResults) == 0,
 			P(Class("text-text mt-5 text-lg"), Text("No results")),
 		),
-		Script(Text(repoSearchJS)),
+		Script(Raw(repoSearchJS)),
 	}...)
 }

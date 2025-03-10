@@ -29,6 +29,6 @@ func RepoFileTemplate(rfc RepoFileContext) Node {
 				Button(ID("copy"), Class("absolute top-0 right-0 rounded bg-base hover:bg-surface0")),
 			),
 		),
-		Script(Text(repoFileJS)),
+		Script(Raw(repoFileJS)),
 	}...)
 }
