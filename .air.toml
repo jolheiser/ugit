@@ -1,0 +1,24 @@
+root = "."
+testdata_dir = "testdata"
+tmp_dir = "tmp"
+
+[build]
+  bin = "./ugitd"
+  cmd = "go build ./cmd/ugitd"
+  delay = 1000
+  exclude_file = ["internal/html/tailwind.go"]
+  exclude_regex = ["_test.go"]
+  exclude_unchanged = true
+  include_ext = ["go"]
+  pre_cmd = ["go generate ./..."]
+
+[misc]
+  clean_on_exit = true
+
+[proxy]
+  app_port = 8449
+  enabled = true
+  proxy_port = 8450
+
+[screen]
+  clear_on_rebuild = true
