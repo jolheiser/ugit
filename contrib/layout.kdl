@@ -5,19 +5,13 @@ layout {
 		command "nix"
 		args "develop"
 		size "90%"
-		start_suspended true
 	}
 	pane split_direction="vertical" {
 		pane {
-			name "run"
-			command "go"
-			args "run" "./cmd/ugitd"
-			start_suspended true
-		}
-		pane {
-			name "watch"
+			name "air"
 			command "nix"
-			args "develop" "--command" "nu" "-c" "watch --glob *.templ ./internal/html/ {|| go generate ./...}"
+			args "develop" "--command" "air"
+			start_suspended true
 		}
 	}
 }
