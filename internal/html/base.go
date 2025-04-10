@@ -20,6 +20,8 @@ func base(bc BaseContext, children ...Node) Node {
 			Link(Rel("stylesheet"), Href("/_/tailwind.css")),
 			ogp("title", bc.Title),
 			ogp("description", bc.Description),
+			Meta(Name("forge"), Content("ugit")),
+			Meta(Name("keywords"), Content("git,forge,ugit")),
 		},
 		Body: []Node{
 			Class("latte dark:mocha bg-base/50 dark:bg-base/95 max-w-7xl mx-5 sm:mx-auto my-10"),
