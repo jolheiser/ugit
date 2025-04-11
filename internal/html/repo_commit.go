@@ -51,7 +51,7 @@ func RepoCommitTemplate(rcc RepoCommitContext) Node {
 					If(file.From.Path != "",
 						A(Class("underline decoration-text/50 decoration-dashed hover:decoration-solid"), Href(fmt.Sprintf("/%s/tree/%s/%s", rcc.RepoHeaderComponentContext.Name, file.From.Commit, file.From.Path)), Text(file.From.Path)),
 					),
-					If(file.From.Path != file.To.Path, Text(" → ")),
+					If(file.From.Path != "" && file.To.Path != "", Text(" → ")),
 					If(file.To.Path != "",
 						A(Class("underline decoration-text/50 decoration-dashed hover:decoration-solid"), Href(fmt.Sprintf("/%s/tree/%s/%s", rcc.RepoHeaderComponentContext.Name, file.To.Commit, file.To.Path)), Text(file.To.Path)),
 					),
