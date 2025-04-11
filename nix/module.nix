@@ -140,6 +140,33 @@ in
               Restart = "always";
               RestartSec = "15";
               WorkingDirectory = instanceCfg.homeDir;
+              ReadWritePaths = [ instanceCfg.homeDir ];
+              CapabilityBoundingSet = "";
+              NoNewPrivileges = true;
+              ProtectSystem = "strict";
+              ProtectHome = true;
+              PrivateTmp = true;
+              PrivateDevices = true;
+              PrivateUsers = true;
+              ProtectHostname = true;
+              ProtectClock = true;
+              ProtectKernelTunables = true;
+              ProtectKernelModules = true;
+              ProtectKernelLogs = true;
+              ProtectControlGroups = true;
+              RestrictAddressFamilies = [
+                "AF_UNIX"
+                "AF_INET"
+                "AF_INET6"
+              ];
+              RestrictNamespaces = true;
+              LockPersonality = true;
+              MemoryDenyWriteExecute = true;
+              RestrictRealtime = true;
+              RestrictSUIDSGID = true;
+              RemoveIPC = true;
+              PrivateMounts = true;
+              SystemCallArchitectures = "native";
               ExecStart =
                 let
                   configFile = pkgs.writeText "ugit-${name}.yaml" (
