@@ -45,5 +45,5 @@
 }
 
 .code>.chroma {
-  @apply text-sm p-3 rounded;
+  @apply text-sm p-3 rounded overflow-scroll;
 }
