@@ -2,17 +2,17 @@
     <picture>
       <img alt="ugit logo" width="250" src="./assets/ugit.svg" />
     </picture>
-    <h3 align="center">ugit</h3>
+    <h3 align="center">µgit</h3>
 </p>
 
 Minimal git server
 
-ugit allows cloning via HTTPS/SSH, but can only be pushed to via SSH.
+µgit allows cloning via HTTPS/SSH, but can only be pushed to via SSH.
 
 There are no plans to directly support issues or PR workflows, although webhooks are planned and auxillary software may be created to facilitate these things.
 If you wish to collaborate, please send me patches via [git-pr](https://pr.jolheiser.com/repos/ugit).
 
-Currently all HTML is allowed in markdown, ugit is intended to be run by/for a trusted user.
+Currently all HTML is allowed in markdown, µgit is intended to be run by/for a trusted user.
 
 ## Getting your public SSH keys from another forge
 
