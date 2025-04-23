@@ -134,6 +134,14 @@ type CommitFileEntry struct {
 	Commit string
 }
 
+// Path returns either the To or From path, in order of preference
+func (c CommitFile) Path() string {
+	if c.To.Path != "" {
+		return c.To.Path
+	}
+	return c.From.Path
+}
+
 // Short returns the first eight characters of the SHA
 func (c Commit) Short() string {
 	return c.SHA[:8]

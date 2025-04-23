@@ -10,25 +10,18 @@ import (
 	"github.com/alecthomas/chroma/v2/styles"
 )
 
-var (
-	// Formatter is the default formatter
-	Formatter = html.New(
-		html.WithLineNumbers(true),
-		html.WithLinkableLineNumbers(true, "L"),
-		html.WithClasses(true),
-		html.LineNumbersInTable(true),
-	)
-	basicFormatter = html.New(
-		html.WithClasses(true),
-	)
-	// Code is the entrypoint for formatting
-	Code = code{}
-)
-
-type code struct{}
-
 var customReg = map[string]string{
 	".hujson": "json",
+}
+
+// Options are the default set of formatting options
+func Options(linePrefix string) []html.Option {
+	return []html.Option{
+		html.WithLineNumbers(true),
+		html.WithLinkableLineNumbers(true, linePrefix),
+		html.WithClasses(true),
+		html.LineNumbersInTable(true),
+	}
 }
 
 func setup(source []byte, fileName string) (chroma.Iterator, *chroma.Style, error) {
@@ -54,22 +47,13 @@ func setup(source []byte, fileName string) (chroma.Iterator, *chroma.Style, erro
 	return iter, style, nil
 }
 
-// Basic formats code without any extras
-func (c code) Basic(source []byte, fileName string, writer io.Writer) error {
-	iter, style, err := setup(source, fileName)
-	if err != nil {
-		return err
-	}
-	return basicFormatter.Format(writer, style, iter)
-}
-
 // Convert formats code with line numbers, links, etc.
-func (c code) Convert(source []byte, fileName string, writer io.Writer) error {
+func Convert(source []byte, fileName, linePrefix string, writer io.Writer) error {
 	iter, style, err := setup(source, fileName)
 	if err != nil {
 		return err
 	}
-	return Formatter.Format(writer, style, iter)
+	return html.New(Options(linePrefix)...).Format(writer, style, iter)
 }
 
 // Snippet formats code with line numbers starting at a specific line

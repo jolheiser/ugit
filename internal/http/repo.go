@@ -88,7 +88,7 @@ func (rh repoHandler) repoFile(w http.ResponseWriter, r *http.Request, repo *git
 	}
 
 	var buf bytes.Buffer
-	if err := markup.Code.Convert([]byte(content), filepath.Base(path), &buf); err != nil {
+	if err := markup.Convert([]byte(content), filepath.Base(path), "L", &buf); err != nil {
 		return httperr.Error(err)
 	}
 
@@ -158,7 +158,7 @@ func (rh repoHandler) repoCommit(w http.ResponseWriter, r *http.Request) error {
 
 	for idx, p := range commit.Files {
 		var patch bytes.Buffer
-		if err := markup.Code.Basic([]byte(p.Patch), "commit.patch", &patch); err != nil {
+		if err := markup.Convert([]byte(p.Patch), "commit.patch", p.Path()+"-L", &patch); err != nil {
 			return httperr.Error(err)
 		}
 		commit.Files[idx].Patch = patch.String()

@@ -12,6 +12,7 @@ import (
 
 	"go.jolheiser.com/ugit/internal/html/markup"
 
+	"github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/alecthomas/chroma/v2/styles"
 )
 
@@ -46,15 +47,16 @@ func tailwind() error {
 	}
 
 	fmt.Println("generating chroma styles...")
+	formatter := html.New(markup.Options("")...)
 
 	latte := styles.Get("catppuccin-latte")
-	if err := markup.Formatter.WriteCSS(tmp, latte); err != nil {
+	if err := formatter.WriteCSS(tmp, latte); err != nil {
 		return err
 	}
 
 	tmp.WriteString("@media (prefers-color-scheme: dark) {")
 	mocha := styles.Get("catppuccin-mocha")
-	if err := markup.Formatter.WriteCSS(tmp, mocha); err != nil {
+	if err := formatter.WriteCSS(tmp, mocha); err != nil {
 		return err
 	}
 	tmp.WriteString("}")

@@ -42,10 +42,17 @@ func RepoCommitTemplate(rcc RepoCommitContext) Node {
 			),
 			Div(Title(rcc.Commit.When.Format("01/02/2006 03:04:05 PM")), Text(humanize.Time(rcc.Commit.When))),
 		),
-		Div(Class("text-text mt-5"), Textf("%d changed files, %d additions(+), %d deletions(-)", rcc.Commit.Stats.Changed, rcc.Commit.Stats.Additions, rcc.Commit.Stats.Deletions)),
+		Details(Class("text-text mt-5"),
+			Summary(Class("cursor-pointer"), Textf("%d changed files, %d additions(+), %d deletions(-)", rcc.Commit.Stats.Changed, rcc.Commit.Stats.Additions, rcc.Commit.Stats.Deletions)),
+			Div(Class("p-3 bg-base rounded"),
+				Map(rcc.Commit.Files, func(file git.CommitFile) Node {
+					return A(Class("block underline decoration-text/50 decoration-dashed hover:decoration-solid"), Href("#"+file.Path()), Text(file.Path()))
+				}),
+			),
+		),
 		Map(rcc.Commit.Files, func(file git.CommitFile) Node {
 			return Group([]Node{
-				Div(Class("text-text mt-5"),
+				Div(Class("text-text mt-5"), ID(file.Path()),
 					Span(Class("text-text/80"), Title(file.Action), Text(string(file.Action[0]))),
 					Text(" "),
 					If(file.From.Path != "",
@@ -56,7 +63,7 @@ func RepoCommitTemplate(rcc RepoCommitContext) Node {
 						A(Class("underline decoration-text/50 decoration-dashed hover:decoration-solid"), Href(fmt.Sprintf("/%s/tree/%s/%s", rcc.RepoHeaderComponentContext.Name, file.To.Commit, file.To.Path)), Text(file.To.Path)),
 					),
 				),
-				Div(Class("whitespace-pre code"),
+				Div(Class("code"),
 					Raw(file.Patch),
 				),
 			})
