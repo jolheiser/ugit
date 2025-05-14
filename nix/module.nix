@@ -12,6 +12,7 @@ let
     { name, config, ... }:
     let
       inherit (lib) mkEnableOption mkOption types;
+      baseDir = "/var/lib/ugit-${name}";
     in
     {
       options = {
@@ -26,13 +27,13 @@ let
         homeDir = mkOption {
           type = types.str;
           description = "ugit home directory";
-          default = "/var/lib/${name}";
+          default = baseDir;
         };
 
         repoDir = mkOption {
           type = types.str;
           description = "where ugit stores repositories";
-          default = "/var/lib/${name}/repos";
+          default = "${baseDir}/repos";
         };
 
         authorizedKeys = mkOption {
@@ -44,13 +45,13 @@ let
         authorizedKeysFile = mkOption {
           type = types.str;
           description = "path to authorized_keys file ugit uses for auth";
-          default = "/var/lib/${name}/authorized_keys";
+          default = "${baseDir}/authorized_keys";
         };
 
         hostKeyFile = mkOption {
           type = types.str;
           description = "path to host key file (will be created if it doesn't exist)";
-          default = "/var/lib/${name}/ugit_ed25519";
+          default = "${baseDir}/ugit_ed25519";
         };
 
         config = mkOption {
@@ -223,28 +224,5 @@ in
         }
       )
     ) { } (builtins.attrNames cfg);
-
-    systemd.tmpfiles.settings = lib.mapAttrs' (
-      name: instanceCfg:
-      lib.nameValuePair "ugit-${name}" (
-        builtins.listToAttrs (
-          map (
-            hook:
-            let
-              script = pkgs.writeShellScript hook.name hook.content;
-              path = "${instanceCfg.repoDir}/hooks/pre-receive.d/${hook.name}";
-            in
-            {
-              name = path;
-              value = {
-                "L" = {
-                  argument = "${script}";
-                };
-              };
-            }
-          ) instanceCfg.hooks
-        )
-      )
-    ) (lib.filterAttrs (name: instanceCfg: instanceCfg.enable) cfg);
   };
 }

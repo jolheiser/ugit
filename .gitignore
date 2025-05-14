@@ -2,3 +2,4 @@
 .ssh/
 .ugit/
 .tsnet/
+*.qcow2

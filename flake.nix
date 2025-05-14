@@ -54,5 +54,19 @@
         }
       );
       nixosModules.default = import ./nix/module.nix;
+      nixosConfigurations.ugitVM = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./nix/vm.nix
+          {
+            virtualisation.vmVariant.virtualisation = {
+              cores = 2;
+              memorySize = 2048;
+              graphics = false;
+            };
+            system.stateVersion = "23.11";
+          }
+        ];
+      };
     };
 }
