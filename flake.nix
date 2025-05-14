@@ -68,5 +68,21 @@
           }
         ];
       };
+      apps = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          vm = {
+            type = "app";
+            program = "${pkgs.writeShellScript "vm" ''
+              nixos-rebuild build-vm --flake .#ugitVM
+              ./result/bin/run-nixos-vm
+              rm nixos.qcow2
+            ''}";
+          };
+        }
+      );
     };
 }
