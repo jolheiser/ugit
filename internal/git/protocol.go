@@ -58,15 +58,11 @@ func HandlePushOptions(repo *Repo, opts []*packp.Option) error {
 					remove = true
 					tagValue = strings.TrimPrefix(tagValue, "-")
 				}
-				for idx, tag := range repo.Meta.Tags {
-					if strings.EqualFold(tag, tagValue) {
-						if remove {
-							repo.Meta.Tags = append(repo.Meta.Tags[:idx], repo.Meta.Tags[idx+1:]...)
-						} else {
-							repo.Meta.Tags = append(repo.Meta.Tags, strings.ToLower(tagValue))
-						}
-						break
-					}
+				tagValue = strings.ToLower(tagValue)
+				if remove {
+					repo.Meta.Tags.Remove(tagValue)
+				} else {
+					repo.Meta.Tags.Add(tagValue)
 				}
 			}
 		}

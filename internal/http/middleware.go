@@ -30,7 +30,7 @@ func (rh repoHandler) repoMiddleware(next http.Handler) http.Handler {
 			if !rh.s.ShowPrivate {
 				return httperr.Status(errors.New("could not get git repo"), http.StatusNotFound)
 			}
-			repo.Meta.Tags = append(repo.Meta.Tags, "private")
+			repo.Meta.Tags.Add("private")
 		}
 		r = r.WithContext(context.WithValue(r.Context(), repoCtxKey, repo))
 		next.ServeHTTP(w, r)

@@ -92,7 +92,7 @@ func IndexTemplate(ic IndexContext) Node {
 							),
 						),
 						Div(Class("sm:col-span-1 text-subtext0"),
-							Map(repo.Meta.Tags, func(tag string) Node {
+							Map(repo.Meta.Tags.Slice(), func(tag string) Node {
 								return A(Class("rounded border-rosewater border-solid border pb-0.5 px-1 mr-1 mb-1 inline-block"), Href("?tag="+tag), Text(tag))
 							}),
 						),

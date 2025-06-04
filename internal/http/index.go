@@ -3,7 +3,6 @@ package http
 import (
 	"net/http"
 	"os"
-	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -34,10 +33,10 @@ func (rh repoHandler) index(w http.ResponseWriter, r *http.Request) error {
 			if !rh.s.ShowPrivate {
 				continue
 			}
-			repo.Meta.Tags = append(repo.Meta.Tags, "private")
+			repo.Meta.Tags.Add("private")
 		}
 
-		if tagFilter != "" && !slices.Contains(repo.Meta.Tags, strings.ToLower(tagFilter)) {
+		if tagFilter != "" && !repo.Meta.Tags.Contains(strings.ToLower(tagFilter)) {
 			continue
 		}
 		repos = append(repos, repo)
