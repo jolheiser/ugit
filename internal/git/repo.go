@@ -57,6 +57,9 @@ func NewRepo(dir, name string) (*Repo, error) {
 	if err := json.NewDecoder(fi).Decode(&r.Meta); err != nil {
 		return nil, err
 	}
+	if r.Meta.Tags == nil {
+		r.Meta.Tags = make(TagSet)
+	}
 
 	return r, nil
 }
