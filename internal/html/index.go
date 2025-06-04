@@ -1,6 +1,8 @@
 package html
 
 import (
+	"fmt"
+
 	"github.com/dustin/go-humanize"
 	"go.jolheiser.com/ugit/assets"
 	"go.jolheiser.com/ugit/internal/git"
@@ -25,7 +27,7 @@ type IndexLink struct {
 	URL  string
 }
 
-func lastCommit(repo *git.Repo, human bool) string {
+func lastCommitTime(repo *git.Repo, human bool) string {
 	c, err := repo.LastCommit()
 	if err != nil {
 		return ""
@@ -34,6 +36,14 @@ func lastCommit(repo *git.Repo, human bool) string {
 		return humanize.Time(c.When)
 	}
 	return c.When.Format("01/02/2006 03:04:05 PM")
+}
+
+func lastCommit(repo *git.Repo) *git.Commit {
+	c, err := repo.LastCommit()
+	if err != nil {
+		return nil
+	}
+	return &c
 }
 
 func IndexTemplate(ic IndexContext) Node {
@@ -65,19 +75,28 @@ func IndexTemplate(ic IndexContext) Node {
 					)
 				}),
 			),
-			Div(Class("grid sm:grid-cols-8 gap-2 mt-5"),
+			Div(Class("grid sm:grid-cols-10 gap-2 mt-5"),
 				Map(ic.Repos, func(repo *git.Repo) Node {
+					commit := lastCommit(repo)
 					return Group([]Node{
 						Div(Class("sm:col-span-2 text-blue dark:text-lavender"),
 							A(Class("underline decoration-blue/50 dark:decoration-lavender/50 decoration-dashed hover:decoration-solid"), Href("/"+repo.Name()), Text(repo.Name())),
 						),
-						Div(Class("sm:col-span-4 text-subtext0"), Text(repo.Meta.Description)),
+						Div(Class("sm:col-span-3 text-subtext0"), Text(repo.Meta.Description)),
+						Div(Class("sm:col-span-3 text-subtext0"),
+							If(commit != nil,
+								Div(Title(commit.Message),
+									A(Class("underline text-blue dark:text-lavender decoration-blue/50 dark:decoration-lavender/50 decoration-dashed hover:decoration-solid"), Href(fmt.Sprintf("/%s/commit/%s", repo.Name(), commit.SHA)), Text(commit.Short())),
+									Text(": "+commit.Summary()),
+								),
+							),
+						),
 						Div(Class("sm:col-span-1 text-subtext0"),
 							Map(repo.Meta.Tags, func(tag string) Node {
 								return A(Class("rounded border-rosewater border-solid border pb-0.5 px-1 mr-1 mb-1 inline-block"), Href("?tag="+tag), Text(tag))
 							}),
 						),
-						Div(Class("sm:col-span-1 text-text/80 mb-4 sm:mb-0"), Title(lastCommit(repo, false)), Text(lastCommit(repo, true))),
+						Div(Class("sm:col-span-1 text-text/80 mb-4 sm:mb-0"), Title(lastCommitTime(repo, false)), Text(lastCommitTime(repo, true))),
 					})
 				}),
 			),
