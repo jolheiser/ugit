@@ -2,6 +2,7 @@ const lineRe = /#L(\d+)(?:-L(\d+))?/g
 const $lineLines = document.querySelectorAll(".chroma .lntable .lnt");
 const $codeLines = document.querySelectorAll(".chroma .lntable .line");
 const $copyButton = document.getElementById('copy');
+const $permalink = document.getElementById('permalink');
 const $copyIcon = "📋";
 const $copiedIcon = "✅";
 let $code = ""
@@ -13,9 +14,12 @@ if (0 in results) {
     start = results[0][1] !== undefined ? parseInt(results[0][1]) : 0;
     end = results[0][2] !== undefined ? parseInt(results[0][2]) : 0;
 }
-if (start != 0) {
+if (start !== 0) {
     deactivateLines();
     activateLines(start, end);
+    let anchor = `#${start}`;
+    if (end !== 0) anchor += `-${end}`;
+    if (anchor !== "") $permalink.href = $permalink.dataset.permalink + anchor;
     $lineLines[start - 1].scrollIntoView(true);
 }
 for (let line of $lineLines) {
@@ -27,13 +31,17 @@ for (let line of $lineLines) {
         if (event.shiftKey) {
             end = n;
             anchor = `#L${start}-L${end}`;
+        } else if (start === n) {
+            start = 0;
+            end = 0;
         } else {
             start = n;
             end = 0;
             anchor = `#L${start}`;
         }
-        history.replaceState(null, null, anchor);
-        activateLines(start, end);
+        history.replaceState(null, null, window.location.pathname + anchor);
+        $permalink.href = $permalink.dataset.permalink + anchor;
+        if (start !== 0) activateLines(start, end);
     });
 }
 if (navigator.clipboard && navigator.clipboard.writeText) {

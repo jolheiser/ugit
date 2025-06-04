@@ -127,6 +127,21 @@ func (r Repo) Dir(ref, path string) ([]FileInfo, error) {
 	return fis, nil
 }
 
+// GetCommitFromRef returns the commit object for a given ref
+func (r Repo) GetCommitFromRef(ref string) (*object.Commit, error) {
+	g, err := r.Git()
+	if err != nil {
+		return nil, err
+	}
+
+	hash, err := g.ResolveRevision(plumbing.Revision(ref))
+	if err != nil {
+		return nil, err
+	}
+
+	return g.CommitObject(*hash)
+}
+
 // FileContent returns the content of a file in the git tree at a given ref/rev
 func (r Repo) FileContent(ref, file string) (string, error) {
 	t, err := r.Tree(ref)

@@ -92,11 +92,21 @@ func (rh repoHandler) repoFile(w http.ResponseWriter, r *http.Request, repo *git
 		return httperr.Error(err)
 	}
 
+	commit := ref
+	if len(ref) < 40 {
+		commitObj, err := repo.GetCommitFromRef(ref)
+		if err == nil {
+			commit = commitObj.Hash.String()
+		}
+	}
+
 	if err := html.RepoFileTemplate(html.RepoFileContext{
 		BaseContext:                    rh.baseContext(),
 		RepoHeaderComponentContext:     rh.repoHeaderContext(repo, r),
 		RepoBreadcrumbComponentContext: rh.repoBreadcrumbContext(repo, r, path),
 		Code:                           buf.String(),
+		Commit:                         commit,
+		Path:                           path,
 	}).Render(w); err != nil {
 		return httperr.Error(err)
 	}
