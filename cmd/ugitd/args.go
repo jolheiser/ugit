@@ -18,6 +18,7 @@ type cliArgs struct {
 	Profile     profileArgs
 	Log         logArgs
 	ShowPrivate bool
+	TUI         bool
 }
 
 type sshArgs struct {
@@ -114,6 +115,7 @@ func parseArgs(args []string) (c cliArgs, e error) {
 	fs.StringVar(&c.Meta.Description, "meta.description", c.Meta.Description, "App description")
 	fs.StringVar(&c.Profile.Username, "profile.username", c.Profile.Username, "Username for index page")
 	fs.StringVar(&c.Profile.Email, "profile.email", c.Profile.Email, "Email for index page")
+	fs.BoolVar(&c.TUI, "tui", c.TUI, "Run the TUI interface directly")
 	fs.Func("profile.links", "Link(s) for index page", func(s string) error {
 		parts := strings.SplitN(s, ",", 2)
 		if len(parts) != 2 {

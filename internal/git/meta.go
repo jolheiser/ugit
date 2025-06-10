@@ -57,6 +57,9 @@ func (t *TagSet) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
 	}
+	if *t == nil {
+		*t = make(TagSet)
+	}
 	for _, ss := range s {
 		t.Add(ss)
 	}

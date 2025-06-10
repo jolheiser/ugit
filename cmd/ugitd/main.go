@@ -20,6 +20,7 @@ import (
 	"go.jolheiser.com/ugit/internal/git"
 	"go.jolheiser.com/ugit/internal/http"
 	"go.jolheiser.com/ugit/internal/ssh"
+	"go.jolheiser.com/ugit/internal/tui"
 )
 
 func main() {
@@ -38,6 +39,14 @@ func main() {
 	args.RepoDir, err = filepath.Abs(args.RepoDir)
 	if err != nil {
 		panic(err)
+	}
+	
+	// Run TUI mode if requested
+	if args.TUI {
+		if err := tui.Run(args.RepoDir); err != nil {
+			panic(err)
+		}
+		return
 	}
 
 	slog.SetLogLoggerLevel(args.Log.Level)

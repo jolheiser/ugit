@@ -12,6 +12,7 @@ import (
 	"text/tabwriter"
 
 	"go.jolheiser.com/ugit/internal/git"
+	"go.jolheiser.com/ugit/internal/tui"
 
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
@@ -99,28 +100,34 @@ func Middleware(repoDir string, cloneURL string, port int, gh Hooks) wish.Middle
 				}
 			}
 
-			// Repo list
+			// No args, start TUI
 			if len(cmd) == 0 {
-				des, err := os.ReadDir(repoDir)
-				if err != nil && err != fs.ErrNotExist {
-					slog.Error("invalid repository", "error", err)
-				}
-				tw := tabwriter.NewWriter(s, 0, 0, 1, ' ', 0)
-				for _, de := range des {
-					if filepath.Ext(de.Name()) != ".git" {
-						continue
+				if err := tui.Start(s, repoDir); err != nil {
+					slog.Error("failed to start TUI", "error", err)
+					
+					// Fall back to simple list on TUI error
+					des, err := os.ReadDir(repoDir)
+					if err != nil && err != fs.ErrNotExist {
+						slog.Error("invalid repository", "error", err)
 					}
-					repo, err := git.NewRepo(repoDir, de.Name())
-					visibility := "❓"
-					if err == nil {
-						visibility = "🔓"
-						if repo.Meta.Private {
-							visibility = "🔒"
+					tw := tabwriter.NewWriter(s, 0, 0, 1, ' ', 0)
+					for _, de := range des {
+						if filepath.Ext(de.Name()) != ".git" {
+							continue
 						}
+						repo, err := git.NewRepo(repoDir, de.Name())
+						visibility := "❓"
+						if err == nil {
+							visibility = "🔓"
+							if repo.Meta.Private {
+								visibility = "🔒"
+							}
+						}
+						fmt.Fprintf(tw, "%[1]s\t%[3]s\t%[2]s/%[1]s.git\n", strings.TrimSuffix(de.Name(), ".git"), cloneURL, visibility)
 					}
-					fmt.Fprintf(tw, "%[1]s\t%[3]s\t%[2]s/%[1]s.git\n", strings.TrimSuffix(de.Name(), ".git"), cloneURL, visibility)
+					tw.Flush()
 				}
-				tw.Flush()
+				return
 			}
 			sh(s)
 		}
