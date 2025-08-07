@@ -1,0 +1,27 @@
+package html
+
+type BaseContext struct {
+	Title       string
+	Description string
+}
+
+templ base(bc BaseContext) {
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ bc.Title }</title>
+			<link rel="icon" href="/_/favicon.svg"/>
+			<link rel="stylesheet" href="/_/tailwind.css"/>
+			<meta property="og:title" content={ bc.Title }/>
+			<meta property="og:description" content={ bc.Description }/>
+		</head>
+		<body class="latte dark:mocha bg-base/50 dark:bg-base/95 max-w-7xl mx-5 sm:mx-auto my-10">
+			<h2 class="text-text text-xl mb-3">
+				<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href="/">Home</a>
+			</h2>
+			{ children... }
+		</body>
+	</html>
+}

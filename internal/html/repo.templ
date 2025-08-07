@@ -1,0 +1,35 @@
+package html
+
+import "fmt"
+
+type RepoHeaderComponentContext struct {
+	Name        string
+	Ref         string
+	Description string
+	CloneURL    string
+	Tags        []string
+}
+
+templ repoHeaderComponent(rhcc RepoHeaderComponentContext) {
+	<div class="mb-1 text-text">
+		<a class="text-lg underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL("/" + rhcc.Name) }>{ rhcc.Name }</a>
+		if rhcc.Ref != "" {
+			{ " " }
+			<a class="text-text/80 text-sm underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/", rhcc.Name, rhcc.Ref)) }>{ "@" + rhcc.Ref }</a>
+		}
+		{ " - " }
+		<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/refs", rhcc.Name)) }>refs</a>
+		{ " - " }
+		<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/log/%s", rhcc.Name, rhcc.Ref)) }>log</a>
+		{ " - " }
+		<form class="inline-block" action={ templ.SafeURL(fmt.Sprintf("/%s/search", rhcc.Name)) } method="get"><input class="rounded p-1 bg-mantle focus:border-lavender focus:outline-none focus:ring-0" id="search" type="text" name="q" placeholder="search"/></form>
+		{ " - " }
+		<pre class="text-text inline select-all bg-base dark:bg-base/50 p-1 rounded">{ fmt.Sprintf("%s/%s.git", rhcc.CloneURL, rhcc.Name) }</pre>
+	</div>
+	<div class="text-subtext0 mb-1">
+		for _, tag := range rhcc.Tags {
+			<span class="rounded border-rosewater border-solid border pb-0.5 px-1 mr-1 mb-1 inline-block">{ tag }</span>
+		}
+	</div>
+	<div class="text-text/80 mb-1">{ rhcc.Description }</div>
+}

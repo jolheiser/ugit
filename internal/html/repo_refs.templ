@@ -1,0 +1,41 @@
+package html
+
+import "fmt"
+import "go.jolheiser.com/ugit/internal/git"
+
+type RepoRefsContext struct {
+	BaseContext
+	RepoHeaderComponentContext
+	Branches []string
+	Tags     []git.Tag
+}
+
+templ RepoRefs(rrc RepoRefsContext) {
+	@base(rrc.BaseContext) {
+		@repoHeaderComponent(rrc.RepoHeaderComponentContext)
+		if len(rrc.Branches) > 0 {
+			<h3 class="text-text text-lg mt-5">Branches</h3>
+			<div class="text-text grid grid-cols-4 sm:grid-cols-8">
+				for _, branch := range rrc.Branches {
+					<div class="col-span-2 sm:col-span-1 font-bold">{ branch }</div>
+					<div class="col-span-2 sm:col-span-7"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/", rrc.RepoHeaderComponentContext.Name, branch)) }>tree</a>{ " " }<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/log/%s", rrc.RepoHeaderComponentContext.Name, branch)) }>log</a></div>
+				}
+			</div>
+		}
+		if len(rrc.Tags) > 0 {
+			<h3 class="text-text text-lg mt-5">Tags</h3>
+			<div class="text-text grid grid-cols-8">
+				for _, tag := range rrc.Tags {
+					<div class="col-span-1 font-bold">{ tag.Name }</div>
+					<div class="col-span-7"><a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/tree/%s/", rrc.RepoHeaderComponentContext.Name, tag.Name)) }>tree</a>{ " " }<a class="underline decoration-text/50 decoration-dashed hover:decoration-solid" href={ templ.SafeURL(fmt.Sprintf("/%s/log/%s", rrc.RepoHeaderComponentContext.Name, tag.Name)) }>log</a></div>
+					if tag.Signature != "" {
+						<details class="col-span-8 whitespace-pre"><summary class="cursor-pointer">Signature</summary><code>{ tag.Signature }</code></details>
+					}
+					if tag.Annotation != "" {
+						<div class="col-span-8 mb-3">{ tag.Annotation }</div>
+					}
+				}
+			</div>
+		}
+	}
+}

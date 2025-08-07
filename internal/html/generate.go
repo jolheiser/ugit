@@ -26,6 +26,7 @@ var (
 	otherCSS string
 )
 
+//go:generate go tool templ generate
 //go:generate go run generate.go
 func main() {
 	if err := tailwind(); err != nil {

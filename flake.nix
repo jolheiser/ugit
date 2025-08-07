@@ -47,8 +47,8 @@
               gopls
               air
               tctp.${system}
-              tctpl.${system}
-              vscode-langservers-extracted
+              #tctpl.${system}
+              #vscode-langservers-extracted
             ];
           };
         }

@@ -53,6 +53,10 @@ func (t TagSet) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements [json.Unmarshaler]
 func (t *TagSet) UnmarshalJSON(b []byte) error {
+	if *t == nil {
+		ts := make(TagSet)
+		t = &ts
+	}
 	var s []string
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
