@@ -1,14 +1,18 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
 	"fmt"
 	"log/slog"
 	"strings"
 
 	"github.com/peterbourgon/ff/v3"
-	"github.com/peterbourgon/ff/v3/ffyaml"
+	"go.jolheiser.com/ffcue"
 )
+
+//go:embed args.cue
+var schema string
 
 type cliArgs struct {
 	RepoDir     string
@@ -57,7 +61,7 @@ type logArgs struct {
 
 func parseArgs(args []string) (c cliArgs, e error) {
 	fs := flag.NewFlagSet("ugitd", flag.ContinueOnError)
-	fs.String("config", "ugit.yaml", "Path to config file")
+	fs.String("config", "ugit.cue", "Path to config file")
 
 	c = cliArgs{
 		RepoDir: ".ugit",
@@ -126,10 +130,13 @@ func parseArgs(args []string) (c cliArgs, e error) {
 		return nil
 	})
 
+	parser := &ffcue.ParseConfig{
+		Constraints: schema,
+	}
 	return c, ff.Parse(fs, args,
 		ff.WithEnvVarPrefix("UGIT"),
 		ff.WithConfigFileFlag("config"),
 		ff.WithAllowMissingConfigFile(true),
-		ff.WithConfigFileParser(ffyaml.Parser),
+		ff.WithConfigFileParser(parser.Parse),
 	)
 }
