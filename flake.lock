@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1695841587,
-        "narHash": "sha256-fgiZd5AV+hi8Ne0bJ8SyAx5nppseW4aXJQEIDSr0VNA=",
+        "lastModified": 1753803577,
+        "narHash": "sha256-sE5IgsHacXmfsWJjVVPvb7Aa6oHElt+nfP6+3Pqa414=",
         "ref": "refs/heads/main",
-        "rev": "afca060674b20e0ccecde2d6fe88c887790219a5",
-        "revCount": 1,
+        "rev": "4ce9431cbb4e9e5dceadfbc413fbd34e7305fe8e",
+        "revCount": 3,
         "type": "git",
         "url": "https://git.jolheiser.com/tailwind-ctp"
       },

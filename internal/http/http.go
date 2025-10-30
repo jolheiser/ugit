@@ -116,6 +116,13 @@ func (rh repoHandler) baseContext() html.BaseContext {
 	}
 }
 
+func (rh repoHandler) repoBaseContext(repo *git.Repo) html.BaseContext {
+	return html.BaseContext{
+		Title:       repo.Name(),
+		Description: repo.Meta.Description,
+	}
+}
+
 func (rh repoHandler) repoHeaderContext(repo *git.Repo, r *http.Request) html.RepoHeaderComponentContext {
 	ref := chi.URLParam(r, "ref")
 	if ref == "" {

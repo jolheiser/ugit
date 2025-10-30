@@ -73,7 +73,7 @@ func tailwind() error {
 	defer styles.Close()
 
 	var buf bytes.Buffer
-	cmd := exec.Command("tailwind-ctp", "-i", tmp.Name(), "--minify")
+	cmd := exec.Command("tailwind-ctp_3", "-i", tmp.Name(), "--minify")
 	cmd.Stdout = &buf
 	if err := cmd.Run(); err != nil {
 		return err

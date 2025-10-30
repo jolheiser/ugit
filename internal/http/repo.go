@@ -48,8 +48,7 @@ func (rh repoHandler) repoTree(ref, path string) http.HandlerFunc {
 			back = filepath.Dir(path)
 		}
 		if err := html.RepoTree(html.RepoTreeContext{
-			Description:                    repo.Meta.Description,
-			BaseContext:                    rh.baseContext(),
+			BaseContext:                    rh.repoBaseContext(repo),
 			RepoHeaderComponentContext:     rh.repoHeaderContext(repo, r),
 			RepoBreadcrumbComponentContext: rh.repoBreadcrumbContext(repo, r, path),
 			RepoTreeComponentContext: html.RepoTreeComponentContext{
@@ -101,7 +100,7 @@ func (rh repoHandler) repoFile(w http.ResponseWriter, r *http.Request, repo *git
 	}
 
 	if err := html.RepoFile(html.RepoFileContext{
-		BaseContext:                    rh.baseContext(),
+		BaseContext:                    rh.repoBaseContext(repo),
 		RepoHeaderComponentContext:     rh.repoHeaderContext(repo, r),
 		RepoBreadcrumbComponentContext: rh.repoBreadcrumbContext(repo, r, path),
 		Code:                           buf.String(),
@@ -128,7 +127,7 @@ func (rh repoHandler) repoRefs(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if err := html.RepoRefs(html.RepoRefsContext{
-		BaseContext:                rh.baseContext(),
+		BaseContext:                rh.repoBaseContext(repo),
 		RepoHeaderComponentContext: rh.repoHeaderContext(repo, r),
 		Branches:                   branches,
 		Tags:                       tags,
@@ -148,7 +147,7 @@ func (rh repoHandler) repoLog(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if err := html.RepoLog(html.RepoLogContext{
-		BaseContext:                rh.baseContext(),
+		BaseContext:                rh.repoBaseContext(repo),
 		RepoHeaderComponentContext: rh.repoHeaderContext(repo, r),
 		Commits:                    commits,
 	}).Render(r.Context(), w); err != nil {
@@ -175,7 +174,7 @@ func (rh repoHandler) repoCommit(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if err := html.RepoCommit(html.RepoCommitContext{
-		BaseContext:                rh.baseContext(),
+		BaseContext:                rh.repoBaseContext(repo),
 		RepoHeaderComponentContext: rh.repoHeaderContext(repo, r),
 		Commit:                     commit,
 	}).Render(r.Context(), w); err != nil {
@@ -219,7 +218,7 @@ func (rh repoHandler) repoSearch(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if err := html.RepoSearch(html.SearchContext{
-		BaseContext:                rh.baseContext(),
+		BaseContext:                rh.repoBaseContext(repo),
 		RepoHeaderComponentContext: rh.repoHeaderContext(repo, r),
 		Results:                    results,
 	}).Render(r.Context(), w); err != nil {
