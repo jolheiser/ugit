@@ -9,8 +9,9 @@ Minimal git server
 
 µgit allows cloning via HTTPS/SSH, but can only be pushed to via SSH.
 
-There are no plans to directly support issues or PR workflows, although webhooks are planned and auxillary software may be created to facilitate these things.
-If you wish to collaborate, please send me patches via [git-pr](https://pr.jolheiser.com/repos/ugit).
+There are no plans to directly support issues or PR workflows.
+If you wish to collaborate, please send me patches via [github](https://github.com/jolheiser/ugit) or [tangled](https://tangled.org/@jolheiser.com/ugit).  
+For issue/bug-tracking, I recommend [git-bug](https://github.com/git-bug/git-bug).
 
 Currently all HTML is allowed in markdown, µgit is intended to be run by/for a trusted user.
 
