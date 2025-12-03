@@ -34,11 +34,11 @@
       tctpl = forAllSystems (system: tailwind-ctp-lsp.packages.${system}.default);
     in
     {
-      packages = forAllSystems (system: import ./nix { pkgs = import nixpkgs { inherit system; }; });
+      packages = forAllSystems (system: import ./nix { pkgs = nixpkgs.legacyPackages.${system}; });
       devShells = forAllSystems (
         system:
         let
-          pkgs = import nixpkgs { inherit system; };
+          pkgs = nixpkgs.legacyPackages.${system};
         in
         {
           default = pkgs.mkShell {
