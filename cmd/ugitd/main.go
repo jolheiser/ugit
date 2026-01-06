@@ -143,12 +143,12 @@ func requiredFS(repoDir string) error {
 	if err != nil {
 		return err
 	}
-	fi.WriteString("#!/usr/bin/env bash\n")
-	fi.WriteString(fmt.Sprintf("%s pre-receive-hook\n", bin))
-	fi.WriteString(fmt.Sprintf(`for hook in %s.d/*; do
+	fmt.Fprintln(fi, "#!/usr/bin/env bash")
+	fmt.Fprintf(fi, "%s pre-receive-hook\n", bin)
+	fmt.Fprintf(fi, `for hook in %s.d/*; do
 	test -x "${hook}" && test -f "${hook}" || continue
 	"${hook}"
-done`, fp))
+done`, fp)
 	fi.Close()
 
 	return os.Chmod(fp, 0o755)
@@ -162,7 +162,7 @@ func preReceive() {
 
 	opts := make([]*packp.Option, 0)
 	if pushCount, err := strconv.Atoi(os.Getenv("GIT_PUSH_OPTION_COUNT")); err == nil {
-		for idx := 0; idx < pushCount; idx++ {
+		for idx := range pushCount {
 			opt := os.Getenv(fmt.Sprintf("GIT_PUSH_OPTION_%d", idx))
 			kv := strings.SplitN(opt, "=", 2)
 			if len(kv) == 2 {

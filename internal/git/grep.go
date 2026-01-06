@@ -18,8 +18,8 @@ type GrepResult struct {
 
 // Grep performs a naive "code search" via git grep
 func (r Repo) Grep(search string) ([]GrepResult, error) {
-	if strings.HasPrefix(search, "=") {
-		search = regexp.QuoteMeta(strings.TrimPrefix(search, "="))
+	if after, ok := strings.CutPrefix(search, "="); ok {
+		search = regexp.QuoteMeta(after)
 	}
 	re, err := regexp.Compile(search)
 	if err != nil {

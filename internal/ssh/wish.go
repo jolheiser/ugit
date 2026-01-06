@@ -168,7 +168,7 @@ func gitPack(s Session, gitCmd string, repoDir string, repoName string) error {
 }
 
 // Fatal prints to the session's STDOUT as a git response and exit 1.
-func Fatal(s ssh.Session, v ...interface{}) {
+func Fatal(s ssh.Session, v ...any) {
 	msg := fmt.Sprint(v...)
 	// hex length includes 4 byte length prefix and ending newline
 	pktLine := fmt.Sprintf("%04x%s\n", len(msg)+5, msg)
