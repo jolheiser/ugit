@@ -106,7 +106,6 @@ in
       name: instanceCfg:
       lib.nameValuePair instanceCfg.user {
         home = instanceCfg.homeDir;
-        createHome = true;
         group = instanceCfg.group;
         isSystemUser = true;
         isNormalUser = false;
@@ -117,6 +116,19 @@ in
     users.groups = lib.mapAttrs' (name: instanceCfg: lib.nameValuePair instanceCfg.group { }) (
       lib.filterAttrs (name: instanceCfg: instanceCfg.enable) cfg
     );
+
+    systemd.tmpfiles.settings = lib.mapAttrs' (
+      name: instanceCfg:
+      lib.nameValuePair "10-ugit-${name}" {
+        "${instanceCfg.homeDir}" = {
+          d = {
+            mode = "0750";
+            user = instanceCfg.user;
+            group = instanceCfg.group;
+          };
+        };
+      }
+    ) (lib.filterAttrs (name: instanceCfg: instanceCfg.enable) cfg);
 
     systemd.services = lib.foldl' (
       acc: name:
