@@ -1,0 +1,19 @@
+clone:
+  git:
+    image: woodpeckerci/plugin-git
+    settings:
+      partial: false
+
+steps:
+  - name: nix-build
+    image: bash
+    commands:
+      - nix build
+
+  - name: cachix-push
+    image: bash
+    commands:
+      - cachix push jolheiser result/
+    environment:
+      CACHIX_AUTH_TOKEN:
+        from_secret: cachix_auth_token
